@@ -13,8 +13,8 @@
 \documentclass[twoside,openright,titlepage,fleqn,
 	headinclude,12pt,a4paper,BCOR5mm,footinclude]{scrbook}
 %--------------------------------------------------------------
-\newcommand{\myItalianTitle}{LIBRERIA PYTHON PER L'OCR DI DOCUMENTI D'IDENTIT\`A\xspace}
-\newcommand{\myEnglishTitle}{PYTHON LIBRARY TO PERFORM OCR ON IDENTITY DOCUMENTS\xspace}
+\newcommand{\myItalianTitle}{Libreria Python per l'OCR di documenti d'identit\`a\xspace}
+\newcommand{\myEnglishTitle}{Python library to perform OCR on identity documents\xspace}
 \newcommand{\myDegree}{Corso di Laurea in Informatica\xspace}
 \newcommand{\myName}{Alessio Falai\xspace}
 \newcommand{\myProf}{Maria Cecilia Verri\xspace}
@@ -39,6 +39,8 @@
 \usepackage{caption}
 \usepackage{appendix}
 \usepackage{siunitx}
+\usepackage{tocstyle}
+\usetocstyle{allwithdot}
 %--------------------------------------------------------------
 \usepackage{dia-classicthesis-ldpkg}
 %--------------------------------------------------------------
@@ -107,6 +109,14 @@ parts]{classicthesis}
 \emph{"If a machine is expected to be infallible, it cannot also be intelligent" \break --- Alan Turing} \vspace{\stretch{2}}\null
 \end{flushright}
 \cleardoublepage
+\include{intro}
+\include{chapters/image-binarization}
+\include{chapters/template-matching}
+\include{chapters/ocr-engines}
+\include{chapters/text-detection}
+\include{chapters/docker}
+\include{future}
+\include{thanks}
 \include{bib}
 %--------------------------------------------------------------
 \end{document}
