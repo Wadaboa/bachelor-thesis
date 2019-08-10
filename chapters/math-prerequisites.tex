@@ -5,15 +5,40 @@
 Un'immagine digitale \textit{I} con risoluzione $m\times n$ \`e una matrice di valori interi di dimensione $n\times m$, che pu\`o essere matematicamente interpretata come una funzione semplice (n\`e iniettiva n\`e suriettiva) \textit{I}: $\mathbb{N}\times\mathbb{N}\supseteq X \to \mathbb{P}^{c}$, che si occupa di mappare una coppia ordinata $(u,v)\in\mathbb{N}\times\mathbb{N}$, con $u,v\in\mathbb{N}$, in una \textit{c-upla} $p=(p_{1}, p_{2}, \dots, p_{c})$, in cui ciascun valore $p_{i}$ di $p$ rappresenta il valore del pixel associato nel canale ${i}$, con $0 \leq p_{i} \leq 2^{b} - 1$, dove $b$ \`e il numero fissato di bit utilizzati per rappresentare ciascun pixel e $2^{b}$ indica il massimo numero di colori o di livelli di grigio utilizzabili. Per esempio, ipotizzando di utilizzare canali colore standard, nel caso in cui si lavori con immagini in scala di grigi si avr\`a $c=1$, mentre nel caso in cui si lavori con immagini \textit{RGB} si avr\`a $c=3$ ($c=4$ per immagini \textit{RGBA} o \textit{CMYK}). Inoltre, supponendo di utilizzare una profondit\`a pari a $b=8$ sar\`a possibile specificare interi compresi tra $0$ e $255$ per i valori di ciascun pixel. Infine, indichiamo la risoluzione dell'immagine come la coppia $(m, n)\in\mathbb{N}\times\mathbb{N}\colon(n, m)=\max_{(x, y)\in X} (x,y)$.
 
 \section{Convoluzione}
-La \textit{convoluzione} \`e un'operazione alla base dell'\textit{image processing}, grazie alla quale \`e possibile andare ad analizzare ed eventualmente accentuare o alleviare diversi aspetti di una data immagine, come la sfocatura, la nitidezza, i contorni e molto altro. L'operazione, che viene descritta nella forma discreta, prende dunque in input due immagini digitali, ovvero l'immagine originale \textit{I} (normalmente un singolo canale) e l'immagine $K$, denominata \textit{kernel} o \textit{elemento strutturante}, e intuitivamente si occupa di far scorrere la matrice $K$ sull'immagine $I$, generalmente a partire dal bordo in alto a sinistra, effettuando una somma pesata dei valori di $I$ dati dalle proiezioni delle posizioni correntemente analizzate dalla matrice $K$, in cui i pesi sono dati proprio dagli elementi di $K$. Solitamente la dimensione della matrice $K$ \`e molto minore della dimensione dell'immagine originale e spesso $K$ \`e una matrice quadrata $n\times n$, con $n$ dispari. Pi\`u formalmente, l'operazione di convoluzione $I * K$ in un punto $(i,j)$ \`e data da:
+La \textit{convoluzione} \`e un'operazione alla base dell'\textit{image processing}, grazie alla quale \`e possibile andare ad analizzare ed eventualmente accentuare o alleviare diversi aspetti di una data immagine, come la sfocatura, la nitidezza, i contorni e molto altro. L'operazione, che viene descritta nella forma discreta, prende dunque in input due immagini digitali, ovvero l'immagine originale \textit{I} (normalmente un singolo canale) e l'immagine $K$, denominata \textit{kernel} o \textit{elemento strutturante}, e intuitivamente si occupa di far scorrere la matrice $K$ sull'immagine $I$, generalmente a partire dal bordo in alto a sinistra, effettuando una somma pesata dei valori di $I$ dati dalle proiezioni delle posizioni correntemente analizzate dalla matrice $K$, in cui i pesi sono dati proprio dagli elementi di $K$. Solitamente la dimensione della matrice $K$ \`e molto minore della dimensione dell'immagine originale e spesso $K$ \`e una matrice quadrata $n\times n$, con $n$ dispari. Pi\`u formalmente, l'operazione di \textit{convoluzione} $I * K$ in un punto $(i,j)$ \`e data da:
 \begin{equation}
-	\label{eq:1.1}
-	I'(i, j) = \sum_{x = 1}^{n}\sum_{y = 1}^{n}(I(i + \left\lceil{\dfrac{n}{2}}\right\rceil - x, j + \left\lceil{\dfrac{n}{2}}\right\rceil - y)\cdot K(x,y))
+	\label{eq:convolution}
+	\begin{split}
+		I^{*}(i, j) & = \sum_{x = -n}^{n}\sum_{y = -n}^{n}(I(i-x, j-y)\cdot K(x,y))=\\
+		& = \sum_{x = 1}^{n}\sum_{y = 1}^{n}(I(i + \left\lceil{\dfrac{n}{2}}\right\rceil - x, j + \left\lceil{\dfrac{n}{2}}\right\rceil - y)\cdot K(x,y))
+	\end{split}
 \end{equation}
-Nel caso in cui nella formula \ref{eq:1.1} i due \textit{-} venissero sostituiti da due \textit{+} si otterrebbe la formulazione della \textit{correlazione} $I \otimes K$ in un punto $(i,j)$:
+Nel caso in cui nella formula \ref{eq:convolution} i segni \textit{-} e \textit{+} venissero invertiti si otterrebbe la formulazione della \textit{correlazione} $I \otimes K$ in un punto $(i,j)$:
 \begin{equation}
-	I'(i, j) = \sum_{x = 1}^{n}\sum_{y = 1}^{n}(I(i + \left\lceil{\dfrac{n}{2}}\right\rceil + x, j + \left\lceil{\dfrac{n}{2}}\right\rceil + y)\cdot K(x,y))
+	\label{eq:correlation}
+	\begin{split}
+		I^{\otimes}(i, j) & = \sum_{x = -n}^{n}\sum_{y = -n}^{n}(I(i-x, j-y)\cdot K(x,y))=\\
+		& = \sum_{x = 1}^{n}\sum_{y = 1}^{n}(I(i - \left\lceil{\dfrac{n}{2}}\right\rceil + x, j - \left\lceil{\dfrac{n}{2}}\right\rceil + y)\cdot K(x,y))
+	\end{split}
 \end{equation}
-\textit{Convoluzione} e \textit{correlazione} possono risultare equivalenti se per passare da un'operazione all'altra si effettua un ribaltamento sui due assi, orizzontale e verticale, del filtro (graficamente $K$ viene ruotata di $180^{\circ}$). Dunque le due operazioni risultano identiche nel caso in cui la matrice $K$ sia simmetrica. In particolare, si preferisce utilizzare la convoluzione quando sono necessarie le propriet\`a commutativa, associativa e distributiva. Inoltre, dato che spesso il risultato delle operazioni descritte viene utilizzato come valore di intensit\`a di pixel, tale risultato viene normalizzato, dividendolo per la somma dei pesi del filtro. La complessit\`a computazionale delle operazioni, data un'immagine di dimensione $m\times m$ e un kernel di dimensione $n\times n$, \`e piuttosto elevata, dato che richiede un numero di moltiplicazioni pari a $n^{2}\cdot m^{2}$ e altrettante somme. Di seguito un esempio di convoluzione:
+\textit{Convoluzione} e \textit{correlazione} possono risultare equivalenti se per passare da un'operazione all'altra si effettua un ribaltamento orizzontale e verticale del filtro (graficamente $K$ viene ruotata di $180^{\circ}$). Dunque le due operazioni risultano identiche nel caso in cui la matrice $K$ sia simmetrica rispetto ai due assi. In particolare, si preferisce utilizzare la convoluzione quando sono necessarie le propriet\`a commutativa, associativa e distributiva. Inoltre, dato che spesso il risultato delle operazioni descritte viene utilizzato come valore di intensit\`a di pixel, tale risultato viene normalizzato, dividendolo per la somma dei pesi del filtro. La complessit\`a computazionale delle operazioni, data ad esempio un'immagine di dimensione $m\times m$ e un kernel di dimensione $n\times n$, \`e piuttosto elevata, dato che richiede un numero di moltiplicazioni pari a $n^{2}\cdot m^{2}$ e altrettante somme. Di seguito un esempio di convoluzione e correlazione:
+$$
+I=\bordermatrix{
+		& & & j & & \cr
+        & & & \dots & & \cr
+		& & 30 & 28 & 32 & \cr
+		i & \vdots & 27 & 26 & 10 & \vdots \cr
+		& & 29 & 22 & 18 & \cr
+		& & & \dots & & \cr
+	},
+K=\begin{pmatrix} 
+	4 & -2 & 1 \\
+	-1 & 5 & -3\\
+	-6 & 0 & 4
+\end{pmatrix}
+$$
+Calcoliamo $I * K$ nella posizione $(i, j)$ come $$I^{*}(i, j) = 18\cdot 4 - 22\cdot 2 + 29\cdot 1 - 10\cdot 1+ 26\cdot 5 -27\cdot 3 - 32\cdot 6 + 28\cdot 0 + 30\cdot 4 = 24,$$
+mentre calcoliamo $I \otimes K$ nella posizione $(i, j)$ come $$I^{\otimes}(i, j) = 30\cdot 4 - 28\cdot 2 + 32\cdot 1 - 27\cdot 1+ 26\cdot 5 -10\cdot 3 - 29\cdot 6 + 22\cdot 0 + 18\cdot 4 = 67$$
+Un problema che pu\`o risultare evidente riguarda il modo di trattare i bordi, nel caso in cui l'intorno di un pixel non sia disponibile. Per ovviare a tale problema esistono diverse tecniche valide, come ipotizzare che i pixel non disponibili abbiano intensit\`a zero, oppure prolungare i pixel di bordo supponendo intensit\`a costante in quelli non disponibili.
 
 \section{Operazioni morfologiche}
