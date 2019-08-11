@@ -62,28 +62,61 @@ Alcuni esempi di filtri classici:
 \end{itemize}
 
 
-\section{Operazioni morfologiche}
+\section{Elementi di morfologia}
 
 \subsection{Basi della matematica morfologica}
-La matematica morfologica \`e una collezione di operatori, basata sulla teoria degli insiemi e definita su una struttura astratta. Il suo obiettivo \`e quello di analizzare le forme e gli oggetti di un'immagine digitale, attraverso trasformazioni quali erosione, dilatazione, apertura, chiusura e altre. Nella loro forma originaria le operazioni morfologiche prevedono l'utilizzo di un'\textit{immagine binaria} a singolo canale, composta da pixel che possono assumere solo due valori, 1 e 0, bianco e nero, \textit{foreground} e \textit{background}, oltre che di un \textit{elemento strutturante} (\textit{SE}), anch'esso sotto forma di immagine binaria a singolo canale, generalmente di dimensione molto minore di quella dell'immagine originale. Per correttezza, da ora in poi, in questa sezione, rappresenteremo un'immagine binaria \textit{I} come un insieme di punti $Q_{I}$ contenente tutte le coppie $(u,v)$ di pixel \textit{foreground} di \textit{I}, ovvero tali che $I(u, v) = 1$.\\
-Il risultato dell'operazione di \textit{erosione} di un'immagine mostra dove lo SE viene contenuto negli oggetti dell'immagine, ovvero, intuitivamente permette di rimuovere pixel dal contorno di componenti connesse di colore bianco, in quantit\`a dipendente dalla grandezza dello SE. In formule:
+La matematica morfologica \`e una collezione di operatori, basata sulla teoria degli insiemi e definita su una struttura astratta\footnote{La struttura astratta alla quale si fa riferimento \`e un \textit{reticolo} infinito, un'estensione della teoria degli insiemi di Minkowski.}. Il suo obiettivo \`e quello di analizzare le forme e gli oggetti di un'immagine digitale, attraverso trasformazioni quali erosione, dilatazione, apertura, chiusura e altre. Nella loro forma originaria le operazioni morfologiche prevedono l'utilizzo di un'\textit{immagine binaria} a singolo canale, composta da pixel che possono assumere solo due valori, 1 e 0, bianco e nero, \textit{foreground} e \textit{background}, oltre che di un \textit{elemento strutturante} (\textit{SE}), anch'esso sotto forma di immagine binaria a singolo canale, generalmente di dimensione molto minore di quella dell'immagine originale. Per correttezza, da ora in poi, in questa sezione, rappresenteremo un'immagine binaria \textit{I} come un insieme di punti $Q_{I}$ contenente tutte le coppie $(u,v)$ di pixel \textit{foreground} di \textit{I}, ovvero tali che $I(u, v) = 1$ e considereremo i termini in \textbf{grassetto} come coppie ordinate $(u,v) \in \mathbb{N}\times\mathbb{N}$.
+\par Di seguito una descrizione degli operatori morfologici di base:\\
+Il risultato dell'operazione di \textit{erosione} di un'immagine mostra dove lo SE viene contenuto negli oggetti dell'immagine, ovvero, intuitivamente permette di rimuovere pixel dal contorno di \textit{componenti connesse}\footnote{Una \textit{componente connessa} \textit{C} di un insieme di punti \textit{foreground} $P$ di un'immagine binaria $I$ \`e un insieme $C\subseteq P$ tale che $\forall \textbf{p}_{1}, \textbf{p}_{n} \in C$ esiste un percorso $\textbf{p}_{1}, \dots, \textbf{p}_{n}$ in cui ogni $\textbf{p}_{i}$ \`e \textit{k-vicino} (\textit{4-vicino} o \textit{8-vicino}) a $\textbf{p}_{i-1}$ e $\neg \exists \textbf{q}\notin P$ \textit{k-adiacente} a un punto di $P$. \cite{bib:binary-images-connectivity}} di colore bianco, in quantit\`a dipendente dalla grandezza dello SE. In formule:
 \begin{equation}
 	\label{eq:erosion}
-	[\epsilon_{SE}(Q_{I})](x) = \underset{s\in SE}{\bigwedge}(Q_{I}(x+s))
-\end{equation}\\
+	[\epsilon_{Q_{SE}}(Q_{I})](\textbf{x}) = \underset{\textbf{s}\in Q_{SE}}{\bigwedge}(Q_{I}(\textbf{x}+\textbf{s}))
+\end{equation}
 Il risultato dell'operazione di \textit{dilatazione} di un'immagine mostra dove lo SE tocca gli oggetti dell'immagine, ovvero, intuitivamente permette di aggiungere pixel al contorno di componenti connesse di colore bianco, in quantit\`a dipendente dalla grandezza dello SE. In formule:
 \begin{equation}
 	\label{eq:dilation}
-	[\delta_{SE}(Q_{I})](x) = \underset{s\in SE}{\bigvee}(Q_{I}(x+s))
-\end{equation}\\
-Le operazioni di \textit{apertura} (\textit{chiusura}) sono invece la combinazione in sequenza di erosione (dilatazione) e dilatazione (erosione) dello SE con la propria \textit{riflessione}\footnote{La \textit{riflessione} di un'immagine binaria $Q_{I}$ rispetto all'origine viene definita come $\check{Q_{I}}=\{(-u,-v) \colon (u,v)\in Q_{I}\}$}. Queste due operazioni vengono molto utilizzate per rimuovere "sporco" (\textit{noise}) dalle immagini e per "chiudere" piccoli "buchi" all'interno di oggetti che si trovano nel \textit{foreground}. In formule:
+	[\delta_{Q_{SE}}(Q_{I})](\textbf{x}) = \underset{\textbf{s}\in Q_{SE}}{\bigvee}(Q_{I}(\textbf{x}+\textbf{s}))
+\end{equation}
+Le operazioni di \textit{apertura} (\textit{chiusura}) sono invece la combinazione in sequenza di erosione (dilatazione) e dilatazione (erosione) dello SE con la propria \textit{riflessione}\footnote{La \textit{riflessione} di un insieme di punti $P$ di un'immagine binaria $I$ rispetto all'origine viene definita come $\check{P}=\{(-u,-v) \colon (u,v)\in P\}$.}. Queste due operazioni vengono molto utilizzate per rimuovere "sporco" (\textit{noise}) dalle immagini e per "chiudere" piccoli "buchi" all'interno di oggetti che si trovano nel \textit{foreground}. In formule:
 \begin{equation}
 	\label{eq:opening}
-	\gamma_{SE}(Q_{I}) = \delta_{\check{SE}}(\epsilon_{SE}(Q_{I}))
+	\gamma_{Q_{SE}}(Q_{I}) = \delta_{\check{Q_{SE}}}(\epsilon_{Q_{SE}}(Q_{I}))
 \end{equation}
 \begin{equation}
 	\label{eq:closing}
-	\phi_{SE}(Q_{I}) = \epsilon_{\check{SE}}(\delta_{SE}(Q_{I}))
+	\phi_{Q_{SE}}(Q_{I}) = \epsilon_{\check{Q_{SE}}}(\delta_{Q_{SE}}(Q_{I}))
 \end{equation}
+\par
 
-\subsection{Apertura e chiusura per ricostruzione}
+\subsection{Ricostruzione morfologica}
+La \textit{ricostruzione} \`e un'operazione molto utile nella matematica morfologica, che viene spesso presentata come un insieme di operatori \textit{geodetici}, che consentono di estrarre le componenti connesse dell'immagine originale, marcate da un'altra immagine \textit{marker}. Dunque, gli operatori di \textit{erosione} e \textit{dilatazione} possono essere ridefiniti in senso \textit{geodetico}. In particolare, consideriamo al solito un'immagine binaria \textit{I} (\textit{mask}), definita dal suo insieme di punti \textit{foreground} $Q_{I}$, un elemento strutturante (SE), che definisce la connettivit\`a da rispettare, e un'immagine \textit{marker} $F \subseteq Q_{I}$, che permette di definire quali componenti connesse devono subire i risultati delle operazioni morfologiche. A questo punto, possiamo definire l'\textit{erosione condizionale} come:
+\begin{equation}
+	\label{eq:conditional-erosion}
+	[\epsilon_{Q_{SE}}(Q_{F})]^{(0)}_{Q_{I}}(\textbf{x}) = [\epsilon_{Q_{SE}}(Q_{F})](\textbf{x}) \cup Q_{I}
+\end{equation}
+e la \textit{dilatazione condizionale} come:
+\begin{equation}
+	\label{eq:conditional-dilation}
+	[\delta_{Q_{SE}}(Q_{F})]^{(0)}_{Q_{I}}(x) = [\delta_{Q_{SE}}(Q_{F})](\textbf{x}) \cap Q_{I}
+\end{equation}
+Le varianti \textit{geodetiche} vengono definite in modo iterativo a partire da quelle \textit{condizionali}. Dunque, si avr\`a che l'\textit{erosione geodetica} pu\`o essere espressa come:
+\begin{equation}
+	\label{eq:geodesic-erosion}
+	[\epsilon_{Q_{SE}}(Q_{F})]^{(i)}_{Q_{I}}(\textbf{x}) = [\epsilon_{Q_{SE}}([\epsilon_{Q_{SE}}(Q_{F})]^{(i-1)}_{Q_{I}}(\textbf{x}))]^{(0)}_{Q_{I}}(\textbf{x}), i=1,2,3,\dots,
+\end{equation}
+mentre la \textit{dilatazione geodetica}:
+\begin{equation}
+	\label{eq:geodesic-dilation}
+	[\delta_{Q_{SE}}(Q_{F})]^{(i)}_{Q_{I}}(\textbf{x}) = [\delta_{Q_{SE}}([\delta_{Q_{SE}}(Q_{F})]^{(i-1)}_{Q_{I}}(\textbf{x}))]^{(0)}_{Q_{I}}(\textbf{x}), i=1,2,3,\dots
+\end{equation}
+Concettualmente, le iterazioni sopra definite potrebbero continuare indefinitamente, ma per ragioni pratiche si sceglie di farle terminare per un intero \textit{n} tale che nessun cambiamento avvenga $\forall n' > n$. L'output stabile $R^{\epsilon}_{Q_{I}}(Q_{F}))=[\epsilon_{Q_{SE}}(Q_{F})]^{(n)}_{Q_{I}}(\textbf{x})$ e $R^{\delta}_{Q_{I}}(Q_{F}))=[\delta_{Q_{SE}}(Q_{F})]^{(n)}_{Q_{I}}(\textbf{x})$ cos\`i definito viene denominato rispettivamente \textit{erosione} e \textit{dilatazione} con \textit{ricostruzione}.
+\par Definiamo adesso le operazioni di \textit{apertura} e \textit{chiusura} con \textit{ricostruzione}:\\
+L'operazione di apertura permette di rimuovere oggetti in base allo SE usato, ma ha il limite di non preservare le altre strutture, che vengono comunque modificate. Questo limite viene completamente superato dall'operatore di \textit{apertura con ricostruzione}, che opera nel seguente modo: l'immagine viene erosa con lo SE come per l'apertura normale, ma invece di far seguire una dilatazione, si opera una ricostruzione usando l'immagine originale come \textit{mask}, e l'immagine erosa come \textit{marker}. L'operazione di \textit{chiusura con ricostruzione} opera in modo analogo. In formule:
+\begin{equation}
+	\label{eq:opening-reconstruction}
+	\tilde{\gamma}_{R}(Q_{I}) = \gamma_{R}^{(n)}(Q_{I}) = R_{Q{I}}^{\delta}[\epsilon^{(n)}(Q_{I})]
+\end{equation}
+\begin{equation}
+	\label{eq:closing-reconstruction}
+	\tilde{\phi}_{R}(Q_{I}) = \phi_{R}^{(n)}(Q_{I}) = R_{Q{I}}^{\epsilon}[\delta^{(n)}(Q_{I})]
+\end{equation}
