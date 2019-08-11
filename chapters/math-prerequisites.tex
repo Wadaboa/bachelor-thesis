@@ -77,6 +77,26 @@ Il risultato dell'operazione di \textit{dilatazione} di un'immagine mostra dove 
 	\label{eq:dilation}
 	[\delta_{Q_{SE}}(I)](\textbf{x}) = \underset{\textbf{s}\in Q_{SE}}{\bigvee}(I(\textbf{x}+\textbf{s}))
 \end{equation}
+
+\begin{figure}[]
+	\centering
+	\subfloat[Prima] {
+		\begin{tikzpicture}[framed,background rectangle/.style={draw=black},scale=0.8]
+			\draw [fill=black] plot [smooth cycle] coordinates {(0,0) (1,1) (3,1) (1,0) (2,-1)};
+			\draw [fill=black] plot [smooth cycle] coordinates {(4,0) (4,2) (7,0) (4,0) (5,0)};
+			\draw  node[fill=black,circle,scale=0.3]{} (0,0);
+		\end{tikzpicture}
+	}
+	\subfloat[Dopo] {
+		\begin{tikzpicture}[framed,background rectangle/.style={draw=black},scale=0.8]
+			\draw [fill=black] plot [smooth cycle] coordinates {(0,0) (1,1) (3,1) (1,0) (2,-1)};
+			\draw [fill=black] plot [smooth cycle] coordinates {(4,0) (4,2) (7,0) (4,0) (5,0)};
+			\draw  node[fill=black,circle,scale=0.3]{} (0,0);
+		\end{tikzpicture}
+	}
+	\caption{Esempio di erosione} \label{fig:erosion}
+\end{figure}
+
 Le operazioni di \textit{apertura} (\textit{chiusura}) sono invece la combinazione in sequenza di erosione (dilatazione) e dilatazione (erosione) dello SE con la propria \textit{riflessione}\footnote{La \textit{riflessione} di un insieme di punti $P$ di un'immagine binaria $I$ rispetto all'origine viene definita come $\check{P}=\{(-u,-v) \colon (u,v)\in P\}$.}. Queste due operazioni vengono molto utilizzate per rimuovere "sporco" (\textit{noise}) dalle immagini e per "chiudere" piccoli "buchi" all'interno di oggetti che si trovano nel \textit{foreground}. In formule:
 \begin{equation}
 	\label{eq:opening}
