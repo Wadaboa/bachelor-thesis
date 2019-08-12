@@ -66,6 +66,24 @@ Alcuni esempi di filtri classici:
 
 \subsection{Basi della matematica morfologica}
 La matematica morfologica \`e una collezione di operatori, basata sulla teoria degli insiemi e definita su una struttura astratta\footnote{La struttura astratta alla quale si fa riferimento \`e un \textit{reticolo} infinito, un'estensione della teoria degli insiemi di Minkowski.}. Il suo obiettivo \`e quello di analizzare le forme e gli oggetti di un'immagine digitale, attraverso trasformazioni quali erosione, dilatazione, apertura, chiusura e altre. Nella loro forma originaria le operazioni morfologiche prevedono l'utilizzo di un'\textit{immagine binaria} a singolo canale, composta da pixel che possono assumere solo due valori, 1 e 0, bianco e nero, \textit{foreground} e \textit{background}, oltre che di un \textit{elemento strutturante} (\textit{SE}), anch'esso sotto forma di immagine binaria a singolo canale, generalmente di dimensione molto minore di quella dell'immagine originale. Per correttezza, da ora in poi, in questa sezione, considereremo un'immagine binaria \textit{I} anche come un insieme di punti $Q_{I}$ contenente tutte le coppie $(u,v)$ di pixel \textit{foreground} di \textit{I}, ovvero tali che $I(u, v) = 1$ e considereremo i termini in \textbf{grassetto} come coppie ordinate $(u,v) \in \mathbb{N}\times\mathbb{N}$.
+\begin{figure}[t]
+	\centering
+	\subfloat[Prima (dopo)] {
+		\resizebox{6cm}{5cm}{%
+		\begin{tikzpicture}[framed,background rectangle/.style={draw=black,fill=black},scale=1.5]
+			\draw [fill=white] plot [smooth cycle] coordinates {(0,0) (1,1) (3,1) (1,0) (2,-1)};
+		\end{tikzpicture}
+		}
+	}
+	\subfloat[Dopo (prima)] {
+		\resizebox{6cm}{5cm}{%
+		\begin{tikzpicture}[framed,background rectangle/.style={draw=black,fill=black},scale=1.5]
+			\draw [fill=white,scale=0.3] plot [smooth cycle] coordinates {(0,0) (1,1) (3,1) (1,0) (2,-1)};
+		\end{tikzpicture}
+		}
+	}
+	\caption{Esempio di erosione (dilatazione) morfologica con elemento strutturante rettangolare} \label{fig:erosion-dilation}
+\end{figure}
 \par Di seguito una descrizione degli operatori morfologici di base:\\
 Il risultato dell'operazione di \textit{erosione} di un'immagine mostra dove lo SE viene contenuto negli oggetti dell'immagine, ovvero, intuitivamente permette di rimuovere pixel dal contorno di \textit{componenti connesse}\footnote{Una \textit{componente connessa} \textit{C} di un insieme di punti \textit{foreground} $P$ di un'immagine binaria $I$ \`e un insieme $C\subseteq P$ tale che $\forall \textbf{p}_{1}, \textbf{p}_{n} \in C$ esiste un percorso $\textbf{p}_{1}, \dots, \textbf{p}_{n}$ in cui ogni $\textbf{p}_{i}$ \`e \textit{k-vicino} (\textit{4-vicino} o \textit{8-vicino}) a $\textbf{p}_{i-1}$ e $\neg \exists \textbf{q}\notin P$ \textit{k-adiacente} a un punto di $P$. \cite{bib:binary-images-connectivity}} di colore bianco, in quantit\`a dipendente dalla grandezza dello SE. In formule:
 \begin{equation}
@@ -78,25 +96,6 @@ Il risultato dell'operazione di \textit{dilatazione} di un'immagine mostra dove 
 	[\delta_{Q_{SE}}(I)](\textbf{x}) = \underset{\textbf{s}\in Q_{SE}}{\bigvee}(I(\textbf{x}+\textbf{s}))
 \end{equation}
 
-\begin{figure}[]
-	\centering
-	\subfloat[Prima] {
-		\begin{tikzpicture}[framed,background rectangle/.style={draw=black},scale=0.8]
-			\draw [fill=black] plot [smooth cycle] coordinates {(0,0) (1,1) (3,1) (1,0) (2,-1)};
-			\draw [fill=black] plot [smooth cycle] coordinates {(4,0) (4,2) (7,0) (4,0) (5,0)};
-			\draw  node[fill=black,circle,scale=0.3]{} (0,0);
-		\end{tikzpicture}
-	}
-	\subfloat[Dopo] {
-		\begin{tikzpicture}[framed,background rectangle/.style={draw=black},scale=0.8]
-			\draw [fill=black] plot [smooth cycle] coordinates {(0,0) (1,1) (3,1) (1,0) (2,-1)};
-			\draw [fill=black] plot [smooth cycle] coordinates {(4,0) (4,2) (7,0) (4,0) (5,0)};
-			\draw  node[fill=black,circle,scale=0.3]{} (0,0);
-		\end{tikzpicture}
-	}
-	\caption{Esempio di erosione} \label{fig:erosion}
-\end{figure}
-
 Le operazioni di \textit{apertura} (\textit{chiusura}) sono invece la combinazione in sequenza di erosione (dilatazione) e dilatazione (erosione) dello SE con la propria \textit{riflessione}\footnote{La \textit{riflessione} di un insieme di punti $P$ di un'immagine binaria $I$ rispetto all'origine viene definita come $\check{P}=\{(-u,-v) \colon (u,v)\in P\}$.}. Queste due operazioni vengono molto utilizzate per rimuovere "sporco" (\textit{noise}) dalle immagini e per "chiudere" piccoli "buchi" all'interno di oggetti che si trovano nel \textit{foreground}. In formule:
 \begin{equation}
 	\label{eq:opening}
@@ -107,6 +106,29 @@ Le operazioni di \textit{apertura} (\textit{chiusura}) sono invece la combinazio
 	\phi_{Q_{SE}}(I) = \epsilon_{\check{Q_{SE}}}(\delta_{Q_{SE}}(I))
 \end{equation}
 \par
+
+\begin{figure}[t]
+	\centering
+	\subfloat[Prima] {
+		\begin{tikzpicture}[framed,background rectangle/.style={draw=black,fill=black},scale=0.8]
+			\draw [fill=white] plot [smooth cycle] coordinates {(0,0) (1,1) (3,1) (1,0) (2,-1)};
+			\draw [fill=white] plot [smooth cycle] coordinates {(4,0) (4,2) (7,0) (5,0) (5,-2)};
+			\draw [fill=white] (4,3) circle (0.1cm);
+			\draw [fill=white] (3,2) circle (0.2cm);
+			\draw [fill=white] (1,-2) circle (0.15cm);
+			\draw [fill=white] (7,-2) circle (0.08cm);
+		\end{tikzpicture}
+	}
+	\subfloat[Dopo] {
+		\begin{tikzpicture}[framed,background rectangle/.style={draw=black,fill=black},scale=0.8]
+			\draw [fill=white] plot [smooth cycle] coordinates {(0,0) (1,1) (3,1) (1,0) (2,-1)};
+			\draw [fill=white] plot [smooth cycle] coordinates {(4,0) (4,2) (7,0) (5,0) (5,-2)};
+			\draw [fill=black] (4,3) circle (0.1cm);
+			\draw [fill=black] (1,-2) circle (0.15cm);
+		\end{tikzpicture}
+	}
+	\caption{Esempio di apertura morfologica con elemento strutturante circolare} \label{fig:opening}
+\end{figure}
 
 \subsection{Ricostruzione morfologica}
 La \textit{ricostruzione} \`e un'operazione molto utile nella matematica morfologica, che viene spesso presentata come un insieme di operatori \textit{geodetici}, che consentono di estrarre le componenti connesse dell'immagine originale, marcate da un'altra immagine \textit{marker}. Dunque, gli operatori di \textit{erosione} e \textit{dilatazione} possono essere ridefiniti in senso \textit{geodetico}. In particolare, consideriamo al solito un'immagine binaria \textit{I} (\textit{mask}), definita dal suo insieme di punti \textit{foreground} $Q_{I}$, un elemento strutturante (SE), che definisce la connettivit\`a da rispettare, e un'immagine \textit{marker} \textit{F} tale che $Q_{F} \subseteq Q_{I}$, che permette di definire quali componenti connesse devono subire i risultati delle operazioni morfologiche. A questo punto, possiamo definire l'\textit{erosione condizionale} come:
