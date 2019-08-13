@@ -42,6 +42,16 @@
 \usepackage{nameref}
 \usepackage{tocstyle}
 \usetocstyle{allwithdot}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\makeatletter
+\renewcommand{\ALG@name}{Algoritmo}
+\renewcommand{\listalgorithmname}{Elenco degli algoritmi}
+\makeatother
+\newcommand{\vars}{\texttt}
+\newcommand{\func}{\textrm}
+\let\oldReturn\Return
+\renewcommand{\Return}{\State\oldReturn}
 %--------------------------------------------------------------
 \usepackage{dia-classicthesis-ldpkg}
 %--------------------------------------------------------------

@@ -1,8 +1,50 @@
 \chapter{Binarizzazione di immagini}
 \label{chap:image-binarization}
 
+
 \section{Introduzione}
+Nel campo dell'\textit{image processing} ricopre un ruolo fondamentale la possibilit\`a di distinguere diversi oggetti, forme e contorni presenti nell'immagine in analisi. Per far ci\`o \`e possibile ricorrere a svariate metodologie, che sono strettamente dipendenti dal contesto in cui si intende operare. Per esempio, nel caso del \textit{riconoscimento ottico dei caratteri} (OCR), le operazioni che andranno descritte assumono importanza assoluta, dato che questo tipo di applicazione, per operare al meglio, ha spesso bisogno di ricevere in input un'immagine in bianco e nero, in cui lo sfondo \`e di colore bianco e il testo \`e di colore nero. Gli argomenti affrontati, nel caso di un'applicazione OCR, saranno soprattutto utili nel caso in cui il motore utilizzato sia \textit{open-source} (vedi \textit{Tesseract}), ovvero nel caso in cui un buon \textit{pre-processing} dell'immagine possa fare la differenza. In questo articolo andremo quindi ad analizzare gli \textit{algoritmi} pi\`u ricorrenti nel campo del \textit{thresholding} di immagini e nella sezione \ref{sec:image-bin-proposed-approach} affronteremo un approccio specificamente studiato per i casi d'uso della libreria QI-OCR.
+
+Da qui in avanti ipotizzeremo di lavorare con immagini originali in \textit{scala di grigi}, ovvero immagini che mantengono un singolo canale colore, anche se i metodi descritti possono facilmente essere generalizzati per immagini con pi\`u di un canale.
+
+
 \section{Sogliatura globale}
+\`E il pi\`u semplice metodo di \textit{thresholding}, che prevede la scelta di un determinato valore di soglia, compreso tra 0 e 255. L'algoritmo di sogliatura prevede quindi la scansione, pixel per pixel, dell'immagine e, nel caso in cui il valore del pixel esaminato sia minore del valore di soglia, tale pixel assumer\`a valore zero, che corrisponde al colore nero. Altrimenti, nel caso in cui il valore del pixel esaminato sia maggiore o uguale del valore di soglia, tale pixel assumer\`a valore 255, che corrisponde al colore bianco. Risulta facile intuire quale possa essere il problema principale di questo tipo di algoritmo di sogliatura, ovvero la scelta del valore di soglia.
+Nel caso in cui il contesto in cui si opera sia relativamente statico, la \textit{sogliatura globale} risulta comunque l'opzione pi\`u consigliata, per la sua facilit\`a di implementazione. In particolare, il metodo descritto risulta adatto se le immagini in analisi presentano all'incirca caratteristiche uniformi in termini di illuminazione e contrasto. Se cos\`i non fosse, sarebbe necessario valutare l'implementazione di algoritmi leggermente pi\`u complessi.
+\begin{algorithm}
+	\caption{Sogliatura globale}
+	\label{alg:thresh-global}
+	\begin{algorithmic}[1]
+		\Function{global-thresholding}{}
+			\State $\vars{image} \gets \text{input image}$
+			\State $\vars{thresh} \gets \text{threshold value}$
+			
+			\For {$i \text{ in \textproc{rows}(image)}$}
+				\For {$j \text{ in \textproc{columns}(image)}$}
+					\If {$\vars{image}[i][j] \geq \vars{thresh}$}
+						\State $\vars{image}[i][j] \gets 255$
+					\Else
+						\State $\vars{image}[i][j] \gets 0$
+					\EndIf
+				\EndFor
+			\EndFor
+
+			\Return $\vars{image}$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+
 \section{Sogliatura adattativa (o locale)}
+Questo metodo di \textit{thresholding} consente di sopperire alle mancanze della sogliatura globale, nel caso in cui le immagini in analisi presentino illuminazione e/o contrasto non uniforme. In particolare, questa tecnica dinamica computa automaticamente differenti valori di soglia per diverse aree dell'immagine. Dunque, l'immagine viene suddivisa in tante \textit{sotto-immagini}, abbastanza piccole da poter ipotizzare che in ciascuna sotto-immagine illuminazione e contrasto siano sufficientemente uniformi. Una volta suddivisa l'immagine, un valore di soglia viene calcolato per ciascuna sotto-immagine. Il calcolo di ogni valore di soglia dipende dall'implementazione specifica dell'algoritmo, ma i metodi pi\`u utilizzati sono i seguenti:
+\begin{itemize}
+	\item Media dei valori dei pixel della sotto-immagine
+	\item Mediana dei valori dei pixel della sotto-immagine
+	\item Media fra valore massimo e minimo dei pixel della sotto-immagine
+\end{itemize}
+Per poter configurare al meglio questo tipo di operazione per il proprio contesto di applicazione, spesso \`e possibile impostare alcuni iperparametri. Nel caso specifico della libreria \textit{OpenCV}, \`e possibile selezionare un valore $c$, che viene sottratto da ciascun valore di soglia di ogni sotto-immagine. Per esempio, nel caso in cui il valore di soglia venga calcolato utilizzando la media $mean$, la soglia scelta non sar\`a esattamente $mean$, ma $mean - c$.
+
+
 \section{Sogliatura di Otsu}
 \section{Algoritmo di sogliatura proposto}
+\label{sec:image-bin-proposed-approach}
