@@ -1,0 +1,60 @@
+\chapter{Image matching}
+\label{chap:image-matching}
+
+\section{Introduzione}
+Quando confrontiamo due immagini, una domanda che sorge spontanea \`e la seguente: quando e sotto quali condizioni due immagini possono essere definite uguali o simili?\par
+Questo capitolo affronta l'argomento del confronto d'immagini e in particolare quello che consente di localizzare una data sotto-immagine (\textit{template}) all'interno di un'immagine pi\`u grande (\textit{scene}). La difficolt\`a di queste operazioni sta nel tipo di trasformazione geometrica subita dal template all'interno dell'immagine in esame, che pu\`o essere di vari tipi:
+\begin{itemize}
+	\item \textit{Scala} $\gets$ Ridimensionamento dell'immagine
+	\item \textit{Traslazione} $\gets$ Spostamento dell'immagine, in direzione $(x, y)$ di un determinato \textit{shift} $(t_{x}, t_{y})$
+	\item \textit{Rotazione} $\gets$ Rotazione dell'immagine di un determinato angolo $\theta$
+	\item \textit{Trasformazione affine} $\gets$ Trasformazione geometrica in cui tutte le linee parallele dell'immagine originale rimangono parallele nell'immagine trasformata, ma possono cambiare angoli e lunghezze
+	\item \textit{Trasformazione prospettica} $\gets$ Trasformazione geometrica 3D non affine, che conserva solo la rettilinearit\`a, ovvero trasforma linee in linee e figure concave (convesse) in figure concave (convesse)
+\end{itemize}
+Possiamo affermare che le \textit{trasformazioni affini} sono un sottoinsieme delle \textit{trasformazioni prospettiche} (\textit{omografie}), in quanto quest'ultime consentono di mappare linee parallele in non parallele e viceversa.\par
+Di seguito un esempio delle trasformazioni descritte:
+\pgfplotsset{compat=1.9}
+\definecolor{zzttqq}{rgb}{0.6,0.2,0}
+\begin{figure}[H]
+	\centering
+	\vspace*{-125pt}
+	\begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=0.65cm,y=0.65cm]
+		\clip(-13.507354775873502,-4.01960764723451) rectangle (13.54377717739078,14.287457239105523);
+		\fill[line width=2pt,color=zzttqq,fill=zzttqq,fill opacity=0.11] (-11.46941052470137,4.683064942964992) -- (-9.451639148270317,4.679101384021924) -- (-9.44767558932725,6.696872760452977) -- (-11.465446965758302,6.7008363193960445) -- cycle;
+		\filldraw[line width=2pt,color=zzttqq,fill=zzttqq,fill opacity=0.11] (-8.06160190949523,3.6263801010405947) -- (-6.043830533064177,3.6224165420975263) -- (-6.03986697412111,5.6401879185285795) -- (-8.05763835055216,5.644151477471647) -- cycle;
+		\filldraw[line width=2pt,color=zzttqq,fill=zzttqq,fill opacity=0.11] (-3.721265372279725,4.314294102722081) -- (-2.0661304203545825,5.468393460775676) -- (-3.2202297784081777,7.123528412700817) -- (-4.875364730333318,5.9694290546472235) -- cycle;
+		\fill[line width=2pt,color=zzttqq,fill=zzttqq,fill opacity=0.11] (0.09746256390296704,6.600075014105602) -- (2.1844151267036294,6.098149714191514) -- (1.154147405827353,4.381036846064381) -- (-0.9063880359251993,4.909379267026575) -- cycle;
+		\fill[line width=2pt,color=zzttqq,fill=zzttqq,fill opacity=0.11] (3.5845225422534424,4.090448514535173) -- (5.829977831342763,5.35847032484444) -- (4.614790263129719,7.577508492885656) -- (3.241099968628017,6.943497587731023) -- cycle;
+		\draw [line width=2pt,color=zzttqq] (-11.46941052470137,4.683064942964992)-- (-9.451639148270317,4.679101384021924);
+		\draw [line width=2pt,color=zzttqq] (-9.451639148270317,4.679101384021924)-- (-9.44767558932725,6.696872760452977);
+		\draw [line width=2pt,color=zzttqq] (-9.44767558932725,6.696872760452977)-- (-11.465446965758302,6.7008363193960445);
+		\draw [line width=2pt,color=zzttqq] (-11.465446965758302,6.7008363193960445)-- (-11.46941052470137,4.683064942964992);
+		\draw [line width=2pt,color=zzttqq] (0.09746256390296704,6.600075014105602)-- (2.1844151267036294,6.098149714191514);
+		\draw [line width=2pt,color=zzttqq] (2.1844151267036294,6.098149714191514)-- (1.154147405827353,4.381036846064381);
+		\draw [line width=2pt,color=zzttqq] (1.154147405827353,4.381036846064381)-- (-0.9063880359251993,4.909379267026575);
+		\draw [line width=2pt,color=zzttqq] (-0.9063880359251993,4.909379267026575)-- (0.09746256390296704,6.600075014105602);
+		\draw [line width=2pt,color=zzttqq] (3.5845225422534424,4.090448514535173)-- (5.829977831342763,5.35847032484444);
+		\draw [line width=2pt,color=zzttqq] (5.829977831342763,5.35847032484444)-- (4.614790263129719,7.577508492885656);
+		\draw [line width=2pt,color=zzttqq] (4.614790263129719,7.577508492885656)-- (3.241099968628017,6.943497587731023);
+		\draw [line width=2pt,color=zzttqq] (3.241099968628017,6.943497587731023)-- (3.5845225422534424,4.090448514535173);
+		\end{tikzpicture}
+		\vspace*{-125pt}
+	\caption{Trasformazioni geometriche (originale, traslazione, rotazione, affine e prospettica)}
+	\label{fig:image-matching-transformations}
+\end{figure}\par
+Le sezioni seguenti descrivono vari metodi testati nella libreria QI-OCR per la localizzazione di un documento, a partire da una data immagine \textit{template}.
+
+\section{Template matching}
+L'approccio pi\`u semplice al quale si pu\`o pensare, molto simile a quello utilizzato nella \textit{convoluzione}, riguarda lo scorrimento dell'immagine \textit{template} sull'immagine di input, per confrontare il template e l'area dell'immagine originale coperta dal template stesso. L'output di questa operazione \`e ancora un'immagine, in scala di grigi, in cui ogni pixel denota il grado di similitudine dei suoi "vicini" con il template. La scelta dell'area intorno al pixel di intensit\`a massima, all'interno dell'immagine prodotta, dar\`a cos\`i il risultato cercato.\par
+Il punto cruciale di questa tecnica sta nel metodo di confronto scelto, mentre il problema principale riguarda la poca resistenza a trasformazioni geometriche, anche semplici. Un modo per superare questi problemi \`e quello di utilizzare diverse immagini \textit{template}, scalate e ruotate, a discapito dell'efficienza.
+
+\section{Feature matching}
+Questo approccio si basa sull'utilizzo di particolari punti di un'immagine, denominati \textit{keypoints} (letteralmente \textit{punti chiave}), che godono di elevata robustezza e stabilit\`a per quanto riguarda trasformazioni geometriche e fotometriche (illuminazione e contrasto). I \textit{keypoints} vengono identificati da specifiche \textit{feature} dell'immagine, quali bordi e contorni, e vengono associati a particolari \textit{descrittori locali}, che codificano informazioni di interesse intorno a ciascun \textit{keypoint}. Una volta individuati \textit{keypoints} e \textit{descrittori} del template e dell'immagine in input \`e possibile computare un \textit{feature matching}, che consiste nell'individuare l'associazione fra le varie \textit{feature} delle due immagini.
+
+\subsection{SIFT}
+\subsection{SURF}
+\subsection{AKAZE}
+\subsection{BRISK}
+
+\section{Edge detection}
+\subsection{HED}
