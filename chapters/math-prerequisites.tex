@@ -3,10 +3,12 @@
 
 
 \section{Immagini digitali}
+\label{sec:math-images}
 Un'immagine digitale \textit{I} con risoluzione $m\times n$ \`e una matrice di valori interi di dimensione $n\times m$, che pu\`o essere matematicamente interpretata come una funzione semplice (n\`e iniettiva n\`e suriettiva) \textit{I}: $\mathbb{N}\times\mathbb{N}\supseteq X \to \mathbb{P}^{c}$, che si occupa di mappare una coppia ordinata $(u,v)\in\mathbb{N}\times\mathbb{N}$, con $u,v\in\mathbb{N}$, in una \textit{c-upla} $p=(p_{1}, p_{2}, \dots, p_{c})$, in cui ciascun valore $p_{i}$ di $p$ rappresenta il valore del pixel associato nel canale ${i}$, con $0 \leq p_{i} \leq 2^{b} - 1$, dove $b$ \`e il numero fissato di bit utilizzati per rappresentare ciascun pixel e $2^{b}$ indica il massimo numero di colori o di livelli di grigio utilizzabili. Per esempio, ipotizzando di utilizzare canali colore standard, nel caso in cui si lavori con immagini in scala di grigi si avr\`a $c=1$, mentre nel caso in cui si lavori con immagini \textit{RGB} si avr\`a $c=3$ ($c=4$ per immagini \textit{RGBA} o \textit{CMYK}). Inoltre, supponendo di utilizzare una profondit\`a pari a $b=8$ sar\`a possibile specificare interi compresi tra $0$ e $255$ per i valori di ciascun pixel. Infine, indichiamo la risoluzione dell'immagine come la coppia $(m, n)\in\mathbb{N}\times\mathbb{N}\colon(n, m)=\max_{(x, y)\in X} (x,y)$.
 
 
 \section{Convoluzione}
+\label{sec:math-convolution}
 La \textit{convoluzione} \`e un'operazione alla base dell'\textit{image processing}, grazie alla quale \`e possibile andare ad analizzare ed eventualmente accentuare o alleviare diversi aspetti di una data immagine, come la sfocatura, la nitidezza, i contorni e molto altro. L'operazione, che viene descritta nella forma discreta, prende dunque in input due immagini digitali, ovvero l'immagine originale \textit{I} (normalmente un singolo canale) e l'immagine $K$, denominata \textit{kernel}, e intuitivamente si occupa di far scorrere la matrice $K$ sull'immagine $I$, generalmente a partire dal bordo in alto a sinistra, effettuando una somma pesata dei valori di $I$ dati dalle proiezioni delle posizioni correntemente analizzate dalla matrice $K$, in cui i pesi sono dati proprio dagli elementi di $K$. Solitamente la dimensione della matrice $K$ \`e molto minore della dimensione dell'immagine originale e spesso $K$ \`e una matrice quadrata $n\times n$, con $n$ dispari. Pi\`u formalmente, l'operazione di \textit{convoluzione} $I * K$ in un punto $(i,j)$ \`e data da:
 \begin{equation}
 	\label{eq:convolution}
@@ -63,8 +65,10 @@ Alcuni esempi di filtri classici:
 
 
 \section{Elementi di morfologia}
+\label{sec:math-morph}
 
 \subsection{Basi della matematica morfologica}
+\label{subsec:math-morph-basis}
 La matematica morfologica \`e una collezione di operatori, basata sulla teoria degli insiemi e definita su una struttura astratta\footnote{La struttura astratta alla quale si fa riferimento \`e un \textit{reticolo} infinito, un'estensione della teoria degli insiemi di Minkowski.}. Il suo obiettivo \`e quello di analizzare le forme e gli oggetti di un'immagine digitale, attraverso trasformazioni quali erosione, dilatazione, apertura, chiusura e altre. Nella loro forma originaria le operazioni morfologiche prevedono l'utilizzo di un'\textit{immagine binaria} a singolo canale, composta da pixel che possono assumere solo due valori, 1 e 0, bianco e nero, \textit{foreground} e \textit{background}, oltre che di un \textit{elemento strutturante} (\textit{SE}), anch'esso sotto forma di immagine binaria a singolo canale, generalmente di dimensione molto minore di quella dell'immagine originale. Per correttezza, da ora in poi, in questa sezione, considereremo un'immagine binaria \textit{I} anche come un insieme di punti $Q_{I}$ contenente tutte le coppie $(u,v)$ di pixel \textit{foreground} di \textit{I}, ovvero tali che $I(u, v) = 1$ e considereremo i termini in \textbf{grassetto} come coppie ordinate $(u,v) \in \mathbb{N}\times\mathbb{N}$.
 \begin{figure}[t]
 	\centering
@@ -131,6 +135,7 @@ Le operazioni di \textit{apertura} (\textit{chiusura}) sono invece la combinazio
 \end{figure}
 
 \subsection{Ricostruzione morfologica}
+\label{subsec:math-morph-reconstruction}
 La \textit{ricostruzione} \`e un'operazione molto utile nella matematica morfologica, che viene spesso presentata come un insieme di operatori \textit{geodetici}, che consentono di estrarre le componenti connesse dell'immagine originale, marcate da un'altra immagine \textit{marker}. Dunque, gli operatori di \textit{erosione} e \textit{dilatazione} possono essere ridefiniti in senso \textit{geodetico}. In particolare, consideriamo al solito un'immagine binaria \textit{I} (\textit{mask}), definita dal suo insieme di punti \textit{foreground} $Q_{I}$, un elemento strutturante (SE), che definisce la connettivit\`a da rispettare, e un'immagine \textit{marker} \textit{F} tale che $Q_{F} \subseteq Q_{I}$, che permette di definire quali componenti connesse devono subire i risultati delle operazioni morfologiche. A questo punto, possiamo definire l'\textit{erosione condizionale} come:
 \begin{equation}
 	\label{eq:conditional-erosion}
@@ -164,6 +169,7 @@ L'operazione di apertura permette di rimuovere oggetti in base allo SE usato, ma
 \end{equation}
 
 \subsection{Altri operatori}
+\label{subsec:math-morph-others}
 Gli operatori fin'ora descritti permettono di estrarre caratteristiche importanti all'interno delle immagini, ma, ad esempio, consentono difficilemente di effettuare un'equalizzazione di parametri di sfondo, oppure di estrarre piccoli particolari d'interesse, oppure ancora di rilevare i contorni di un oggetto. Per ovviare a queste problematiche, si pu\`o ricorrere all'utilizzo di trasformazioni pi\`u specifiche, derivate da quelle di base. In particolare, possiamo definire l'operatore \textit{top-hat}, nelle due versioni \textit{bianca} e \textit{nera}, rispettivamente:
 \begin{equation}
 	\label{eq:white-top-hat}
