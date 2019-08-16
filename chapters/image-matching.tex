@@ -1,6 +1,7 @@
 \chapter{Image matching}
 \label{chap:image-matching}
 
+
 \section{Introduzione}
 Quando confrontiamo due immagini, una domanda che sorge spontanea \`e la seguente: quando e sotto quali condizioni due immagini possono essere definite uguali o simili?\par
 Questo capitolo affronta l'argomento del confronto d'immagini e in particolare quello che consente di localizzare una data sotto-immagine (\textit{template}) all'interno di un'immagine pi\`u grande (\textit{scene}). La difficolt\`a di queste operazioni sta nel tipo di trasformazione geometrica subita dal template all'interno dell'immagine in esame, che pu\`o essere di vari tipi:
@@ -12,7 +13,7 @@ Questo capitolo affronta l'argomento del confronto d'immagini e in particolare q
 	\item \textit{Trasformazione prospettica} $\gets$ Trasformazione geometrica 3D non affine, che conserva solo la rettilinearit\`a, ovvero trasforma linee in linee e figure concave (convesse) in figure concave (convesse)
 \end{itemize}
 Possiamo affermare che le \textit{trasformazioni affini} sono un sottoinsieme delle \textit{trasformazioni prospettiche} (\textit{omografie}), in quanto quest'ultime consentono di mappare linee parallele in non parallele e viceversa.\par
-Di seguito un esempio delle trasformazioni descritte:
+In figura \ref{fig:image-matching-transformations} un esempio delle trasformazioni descritte:
 \pgfplotsset{compat=1.9}
 \definecolor{zzttqq}{rgb}{0.6,0.2,0}
 \begin{figure}[H]
@@ -44,17 +45,45 @@ Di seguito un esempio delle trasformazioni descritte:
 \end{figure}\par
 Le sezioni seguenti descrivono vari metodi testati nella libreria QI-OCR per la localizzazione di un documento, a partire da una data immagine \textit{template}.
 
+
 \section{Template matching}
-L'approccio pi\`u semplice al quale si pu\`o pensare, molto simile a quello utilizzato nella \textit{convoluzione}, riguarda lo scorrimento dell'immagine \textit{template} sull'immagine di input, per confrontare il template e l'area dell'immagine originale coperta dal template stesso. L'output di questa operazione \`e ancora un'immagine, in scala di grigi, in cui ogni pixel denota il grado di similitudine dei suoi "vicini" con il template. La scelta dell'area intorno al pixel di intensit\`a massima, all'interno dell'immagine prodotta, dar\`a cos\`i il risultato cercato.\par
-Il punto cruciale di questa tecnica sta nel metodo di confronto scelto, mentre il problema principale riguarda la poca resistenza a trasformazioni geometriche, anche semplici. Un modo per superare questi problemi \`e quello di utilizzare diverse immagini \textit{template}, scalate e ruotate, a discapito dell'efficienza.
+L'approccio pi\`u semplice al quale si pu\`o pensare, molto simile a quello utilizzato nella \textit{convoluzione}, riguarda lo scorrimento dell'immagine \textit{template} sull'immagine di input, per confrontare il template e l'area dell'immagine originale coperta dal template stesso. L'output di questa operazione \`e ancora un'immagine, in scala di grigi, in cui ogni pixel denota il grado di similitudine dei suoi "vicini" con il template. La scelta dell'area intorno al pixel di intensit\`a massima, nell'immagine prodotta, dar\`a cos\`i il risultato cercato.\par
+Il punto cruciale di questa tecnica sta nel metodo di confronto fra pixel scelto, che potrebbe essere, ad esempio, la misura di \textit{distanza euclidea}. Consideriamo $d_{E}(r, s)$ come la distanza euclidea tra l'immagine template $T$ e l'immagine in input $I$, nella posizione $(r, s)$:
+\begin{equation}
+	\label{eq:euclidean-distance}
+	d_{E}(r, s) = \sqrt{\sum_{(i, j)\in T} (I(r + i, s + j) - T(i, j))^{2}}
+\end{equation}
+A questo punto, per trovare la posizione di \textit{match} migliore, \`e necessario minimizzare il quadrato di $d_{E}(r, s)$:
+\begin{equation}
+	\label{eq:euclidean-distance-squared}
+	\begin{split}
+		& d_{E}^{2}(r, s) = \sum_{(i, j)\in T} (I(r + i, s + j) - T(i, j))^{2} = \\
+		& = \underbrace{\sum_{(i, j)\in T} I^{2}(r + i, s + j)}_{A(r,s)} + \underbrace{\sum_{(i, j)\in T} T^{2}(i, j)}_{B} - 2 \cdot \underbrace{\sum_{(i, j)\in T} I(r + i, s + j) \cdot T(i, j)}_{C(r,s)}  
+	\end{split}
+\end{equation}
+Possiamo notare che ci siamo appena ricondotti alla risoluzione di un problema di \textit{correlazione lineare}, come descritto in \ref{sec:math-convolution}. In particolare, considerando i due termini $A(r,s)$ e $B$ come costanti\footnote{Sfortunatamente, l'assunzione che il termine $A(r,s)$ sia costante non vale generalmente ed \`e per questo necessario l'utilizzo di nozioni pi\`u avanzate, come il \textit{coefficiente di correlazione}.}, otteniamo proprio l'equazione \ref{eq:correlation}.\par
+Il problema principale del \textit{template matching} \`e la poca resistenza a trasformazioni geometriche, anche semplici. Un modo per evitare il presentarsi di questi problemi \`e quello di utilizzare diverse immagini \textit{template}, scalate e ruotate, a discapito dell'efficienza di esecuzione.
+
 
 \section{Feature matching}
-Questo approccio si basa sull'utilizzo di particolari punti di un'immagine, denominati \textit{keypoints} (letteralmente \textit{punti chiave}), che godono di elevata robustezza e stabilit\`a per quanto riguarda trasformazioni geometriche e fotometriche (illuminazione e contrasto). I \textit{keypoints} vengono identificati da specifiche \textit{feature} dell'immagine, quali bordi e contorni, e vengono associati a particolari \textit{descrittori locali}, che codificano informazioni di interesse intorno a ciascun \textit{keypoint}. Una volta individuati \textit{keypoints} e \textit{descrittori} del template e dell'immagine in input \`e possibile computare un \textit{feature matching}, che consiste nell'individuare l'associazione fra le varie \textit{feature} delle due immagini.
+Questo approccio si basa sull'utilizzo di particolari punti di un'immagine, denominati \textit{keypoints} (letteralmente \textit{punti chiave}), che possono godere di elevata robustezza e stabilit\`a per quanto riguarda trasformazioni geometriche e fotometriche (illuminazione e contrasto). I \textit{keypoints} vengono identificati da specifiche \textit{feature} dell'immagine, quali bordi e contorni, e vengono associati a particolari \textit{descrittori locali}, che codificano informazioni di interesse intorno a ciascun \textit{keypoint}. Una volta individuati \textit{keypoints} e \textit{descrittori} del template e dell'immagine in input \`e possibile computare un \textit{matching}, che consiste nell'individuare l'associazione fra le varie \textit{feature} delle due immagini.\par
+Esistono vari algoritmi di \textit{feature matching}, come \textit{KNN} (\textit{K-Nearest-Neighbors}), che prevedono l'utilizzo dei due seguenti metodi principali:
+\begin{itemize}
+	\item \textit{Esaustivo} $\gets$ Ritorna il miglior \textit{match} (\textit{brute force}) o i migliori $K$ \textit{match}, per ciascuna \textit{feature}, in senso assoluto
+	\item \textit{Approssimato} $\gets$ \`E basato sull'utilizzo di algoritmi efficienti di ricerca \textit{nearest neighbor} approssimata\footnote{La libreria \textit{OpenCV} si appoggia alla libreria esterna \textit{FLANN (Fast Library for Approximate Nearest Neighbors)} per questo tipo di operazioni.}, che vengono utilizzati solo per insiemi di \textit{feature} di dimensioni elevate 
+\end{itemize}\par
+Alcuni degli algoritmi pi\`u conosciuti e utilizzati per il calcolo di \textit{keypoints} e \textit{descrittori} sono \textit{SIFT (Scale Invariant Feature Transform)} \cite{bib:sift}, \textit{SURF (Speeded Up Robust Feature)} \cite{bib:surf}, \textit{AKAZE (Accelerated KAZE \cite{bib:kaze})}, \textit{BRISK (Binary Robust Invariant Scalable Keypoints)} \cite{bib:brisk}, \textit{ORB (Oriented FAST and Rotated BRIEF)} \cite{bib:orb} e altri.
 
-\subsection{SIFT}
-\subsection{SURF}
-\subsection{AKAZE}
-\subsection{BRISK}
 
-\section{Edge detection}
+\section{Shape detection}
+Nel caso specifico della libreria QI-OCR, le operazioni descritte di \textit{template matching} e \textit{feature matching} non sono le sole applicabili per la localizzazione del documento d'identit\`a nell'immagine in input. Infatti, considerando le varie tipologie di documenti presenti in territorio internazionale, \`e possibile osservare una caratteristica comune a tutti, ovvero la loro \textit{forma rettangolare}, pi\`u o meno stondata ai bordi. Questo \textit{pattern} consente quindi l'esplorazione di strategie alternative a quelle gi\`a menzionate, permettendo l'utilizzo di alcuni algoritmi di \textit{shape detection}.\par
+In particolare, la procedura utilizzata prevede l'individuazione dei contorni presenti nell'immagine e la selezione del contorno di forma approssimativamente rettangolare di area massima, supponendo, appunto, che tale forma sia proprio il documento cercato. La supposizione appena effettuata \`e consistente, poich\`e \`e possibile presumere che anche nel caso in cui il documento d'identit\`a abbia subito svariate trasformazioni geometriche e la qualit\`a della scansione/fotografia non sia eccelsa, questo sia comunque l'oggetto prevalente all'interno dell'immagine.
+
+\subsection{Filtro di Sobel}
+
+
+\subsection{Canny edge detector}
 \subsection{HED}
+
+
+\section{Implementazione}
