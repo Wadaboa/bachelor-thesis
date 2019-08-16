@@ -93,7 +93,9 @@ Nel caso in cui l'immagine in analisi non presenti esattamente due massimi local
 \label{sec:image-bin-proposed-approach}
 In questa sezione andiamo a descrivere un algoritmo pensato e implementato per la \textit{segmentazione} di immagini contenenti \textit{testo nero su uno sfondo colorato}, arricchito di decorazioni, simboli e varie grafiche, per ottenere un'immagine correttamente processabile da motori OCR (in particolare da quelli open-source, come \textit{Tesseract}).\par
 L'approccio precedentemente adottato dalla libreria QI-OCR prevedeva la scelta mirata di diversi livelli di sogliatura per ciascun campo del documento in analisi, effettuando cos\`i una serie di operazioni di sogliatura globale e di conseguenti chiamate al motore OCR, per poi scegliere il risultato migliore a posteriori. Il problema principale di questo metodo riguarda la scarsa efficienza dal punto di vista computazionale, in quanto il tempo di esecuzione per effettuare un'operazione di sogliatura globale e per ricevere l'output dal motore OCR \`e di circa $1s$\footnote{L'elevato tempo di esecuzione \`e dato principalmente dalla chiamata al motore OCR. Per esempio, nel caso di \textit{Tesseract}, in \textit{Python} non esiste una vera e propria API ufficiale ed \`e dunque necessario utilizzare un \textit{wrapper} che effettua chiamate al software di sistema, introducendo \textit{overhead}.}. Considerando che, in alcuni casi, il numero di soglie da applicare a un particolare campo poteva arrivare anche fino a 10, il tempo di esecuzione per la sola operazione di OCR sarebbe stato all'incirca $10s$.\par
-Consideriamo l'immagine \ref{fig:image-bin-proposed-approach-input} come esempio per l'analisi delle operazioni descritte in seguito.
+Il percorso che ha portato alla soluzione descritta in seguito \`e passato da due strade fallimentari:
+la prima prevedeva l'analisi delle componenti connesse dell'immagine in input, come descritto in \cite{bib:text-extraction}, mentre la seconda prevedeva l'implementazione di una rete neurale convoluzionale, allenata a partire da associazioni \textit{campo} - \textit{soglia} prestabilite. Purtroppo, entrambi i tentativi non hanno ritornato i risultati sperati: nel primo caso per una mancanza di strumenti adatti, mentre nel secondo per la mancanza di una conoscenza approfondita del settore.\par
+Consideriamo l'immagine \ref{fig:image-bin-proposed-approach-input} come esempio per l'analisi delle operazioni che andremo a descrivere.
 \begin{figure}[h]
 	\centering
 	\frame{\includegraphics[width=\linewidth]{img/image-bin-proposed-approach-input.png}}
@@ -160,8 +162,8 @@ Percorriamo le operazioni svolte a ritroso. In particolare, i punti \ref{enum:im
 Il punto \ref{enum:image-bin-proposed-approach-complex-blur} applica una \textit{sfocatura} dell'immagine, utilizzando un filtro che scorre su ciascun pixel e sostituisce ciascun valore con la \textit{mediana} degli elementi "vicini", ovvero degli elementi che si trovano in una determinata sotto-immagine quadrata, centrata sul pixel valutato. La sfocatura \`e necessaria per mettere in risalto gli elementi importanti dell'immagine in esame.\par
 Infine, il punto \ref{enum:image-bin-proposed-approach-complex-tophat} applica l'operazione morfologica \textit{top-hat}, nella versione \textit{bianca}, descritta in \ref{subsec:math-morph-others}, con l'eccezione di sostituire nella formula l'utilizzo dell'\textit{apertura} con la combinazione di \textit{apertura con ricostruzione} e \textit{chiusura con ricostruzione}\cite{bib:top-hat-paper}. In formule:
 \begin{equation}
-	\label{eq:white-top-hat}
-	g_{Q_{SE}}^{w}(I) = I - \tilde{\phi}_{R}(\tilde{\gamma}_{R}(I)),
+	\label{eq:modified-top-hat}
+	\tilde{g}_{Q_{SE}}^{w}(I) = I - \tilde{\phi}_{R}(\tilde{\gamma}_{R}(I)),
 \end{equation}
 Questo tipo di operazione consente di correggere efficacemente condizioni di luce e/o contrasto non uniforme e  di recuperare testi leggermente sbiaditi, che venivano invece penalizzati dalla prima trasformazione descritta.
 \begin{figure}[H]
