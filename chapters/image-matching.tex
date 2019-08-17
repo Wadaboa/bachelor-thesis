@@ -72,7 +72,7 @@ Esistono vari algoritmi di \textit{feature matching}, come \textit{KNN} (\textit
 	\item \textit{Esaustivo} $\gets$ Ritorna il miglior \textit{match} (\textit{brute force}) o i migliori $K$ \textit{match}, per ciascuna \textit{feature}, in senso assoluto
 	\item \textit{Approssimato} $\gets$ \`E basato sull'utilizzo di algoritmi efficienti di ricerca \textit{nearest neighbor} approssimata\footnote{La libreria \textit{OpenCV} si appoggia alla libreria esterna \textit{FLANN (Fast Library for Approximate Nearest Neighbors)} per questo tipo di operazioni.}, che vengono utilizzati solo per insiemi di \textit{feature} di dimensioni elevate 
 \end{itemize}\par
-Alcuni degli algoritmi pi\`u conosciuti e utilizzati per il calcolo di \textit{keypoints} e \textit{descrittori} sono \textit{SIFT (Scale Invariant Feature Transform)} \cite{bib:sift}, \textit{SURF (Speeded Up Robust Feature)} \cite{bib:surf}, \textit{AKAZE (Accelerated KAZE \cite{bib:kaze})}, \textit{BRISK (Binary Robust Invariant Scalable Keypoints)} \cite{bib:brisk}, \textit{ORB (Oriented FAST and Rotated BRIEF)} \cite{bib:orb} e altri.
+Alcuni degli algoritmi pi\`u conosciuti e utilizzati per il calcolo di \textit{keypoints} e \textit{descrittori} sono \textit{SIFT (Scale Invariant Feature Transform)} \cite{bib:sift}, \textit{SURF (Speeded Up Robust Feature)} \cite{bib:surf}, \textit{AKAZE (Accelerated KAZE \cite{bib:kaze})} \cite{bib:akaze}, \textit{BRISK (Binary Robust Invariant Scalable Keypoints)} \cite{bib:brisk}, \textit{ORB (Oriented FAST and Rotated BRIEF)} \cite{bib:orb} e altri.
 
 
 \section{Shape detection}
@@ -211,7 +211,13 @@ L'approccio ideale per i problemi di \textit{edge detection} sarebbe quello di u
 			}
 		}
 	}
-	\caption{Rete \textit{HED}} \label{fig:hed}
+	\caption{Esempio di output della rete \textit{HED}} \label{fig:hed}
 \end{figure}
 
-\section{Implementazione}
+\section{Analisi comparativa}
+Inizialmente, la libreria QI-OCR prevedeva il solo utilizzo dell'algoritmo \textit{SIFT} per la localizzazione del documento. A seguito di uno studio comparativo fra gli algoritmi di \textit{image matching} sopra descritti, \`e stato deciso di scartare algoritmi di \textit{template matching}, per favorire quelli di \textit{feature matching} e \textit{shape detection}. In particolare, i primi vengono utilizzati perch\`e invarianti per trasformazioni fotometriche e per tutte le trasformazioni geometriche menzionate, ad eccezione di quelle prospettiche; mentre i secondi vengono utilizzati perch\`e computazionalmente efficienti e possibilmente invarianti anche per trasformazioni prospettiche, anche se non molto resistenti a cambi di illuminazione e/o contrasto dell'immagine.\par
+Adesso, l'esecuzione della libreria prevede dunque l'utilizzo congiunto degli algoritmi \textit{SIFT}, \textit{SURF}, \textit{AKAZE} e \textit{BRISK} e della rete \textit{HED}, tramite l'impiego di diversi \textit{thread}. Non appena uno dei thread eseguiti torna il risultato prodotto al \textit{processo padre}, l'esecuzione degli altri thread viene interrotta.\par
+L'algoritmo che ha restituito i migliori risultati \`e \textit{AKAZE}, che mantiene all'incirca l'accuratezza di \textit{SIFT}, dimezzando i tempi di esecuzione. L'algoritmo che invece ha restituito i peggiori risultati \`e \textit{ORB}, implementato in fase preliminare e scartato successivamente. Per quanto riguarda \textit{HED} invece, una realizzazione stabile \`e ancora in fase di lavorazione.\par
+Infine, per consentire la produzione di \textit{test massivi} e valutare l'accuratezza e la velocit\`a ottenibile con ciascuno degli algoritmi implementati, la libreria risulta configurabile in base al tipo di localizzazione che si intende effettuare. I risultati riportati sono frutto dell'elaborazione da parte della libreria di un insieme di circa 400 documenti d'identit\`a: 
+
+INSERIRE TABELLA RISULTATI (TEMPO +  ACCURATEZZA)
