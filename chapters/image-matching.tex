@@ -77,7 +77,8 @@ Alcuni degli algoritmi pi\`u conosciuti e utilizzati per il calcolo di \textit{k
 
 \section{Shape detection}
 Nel caso specifico della libreria QI-OCR, le operazioni descritte di \textit{template matching} e \textit{feature matching} non sono le sole applicabili per la localizzazione del documento d'identit\`a nell'immagine in input. Infatti, considerando le varie tipologie di documenti presenti in territorio internazionale, \`e possibile osservare una caratteristica comune a tutti, ovvero la loro \textit{forma rettangolare}, pi\`u o meno stondata ai vertici. Questo \textit{pattern} consente quindi l'esplorazione di strategie alternative a quelle gi\`a menzionate, permettendo l'utilizzo di alcuni algoritmi di \textit{shape detection}.\par
-In particolare, la procedura utilizzata prevede l'individuazione dei bordi presenti nell'immagine e la selezione del contorno di forma approssimativamente rettangolare di area massima, supponendo, appunto, che tale forma sia proprio il documento cercato. La supposizione appena effettuata \`e consistente, poich\`e \`e possibile presumere che anche nel caso in cui il documento d'identit\`a abbia subito svariate trasformazioni geometriche e la qualit\`a della scansione/fotografia non sia eccelsa, questo sia comunque l'oggetto prevalente all'interno dell'immagine.
+In particolare, la procedura utilizzata prevede l'individuazione dei bordi presenti nell'immagine e la selezione del contorno di forma approssimativamente rettangolare di area massima, supponendo, appunto, che tale forma sia proprio il documento cercato. La supposizione appena effettuata \`e consistente, poich\`e \`e possibile presumere che anche nel caso in cui il documento d'identit\`a abbia subito svariate trasformazioni geometriche e la qualit\`a della scansione/fotografia non sia eccelsa, questo sia comunque l'oggetto prevalente all'interno dell'immagine.\par
+Dunque, nelle seguenti sezioni analizzeremo vari metodi di \textit{edge detection}.
 
 \subsection{Edge detection basata sul gradiente}
 Questi metodi di rilevamento dei bordi si basano sul concetto di \textit{derivata} di un'immagine, dato che questo consente l'analisi di cambiamenti in intensit\`a all'interno di una funzione, ovvero la presenza di un bordo all'interno di un'immagine. Solitamente, la derivata parziale $f_{x}=\frac{\partial f}{\partial x}(x, y)$ di una funzione $f(x, y)$ pu\`o essere calcolata solamente se questa \`e  definita nel \textit{continuo}, mentre non \`e definita nel caso \textit{discreto}. Dunque, data una funzione discreta $h(x, y)$, la sua derivata parziale $\frac{\partial h}{\partial x}$ in un punto $(u, v)$ pu\`o essere approssimata interpolando una retta tra i valori vicini $(u + 1, v)$ e $(u - 1, v)$, ottenendo:
@@ -160,8 +161,57 @@ L'operatore proposto da Canny \cite{bib:canny} per il rilevamento dei bordi \`e 
 	\item \textit{Sogliatura con isterisi e tratteggio dei bordi} $\gets$ La \textit{sogliatura con isterisi} prevede l'utilizzo di due valori di soglia, \vars{thresh-low} e \vars{thresh-high}. Per ciascun punto $(u, v)$, se $|\nabla I(u, v)| \leq \vars{thresh-low}$ allora il punto viene automaticamente scartato, mentre se $|\nabla I(u, v)| \geq \vars{thresh-high}$ allora il punto viene automaticamente accettato come parte di un contorno. Nel caso in cui $\vars{thresh-low} < |\nabla I(u, v)| < \vars{thresh-high}$, allora il punto viene accettato solo se \textit{connesso} a un punto $(u', v')$ tale che $|\nabla I(u', v')| \geq \vars{thresh-high}$
 \end{enumerate}\par
 L'operatore \textit{Canny} permette di ottenere dei buoni risultati, con un impiego di risorse relativamente basso, ma ha lo svantaggio di dipendere dai 3 parametri $\sigma$, \vars{thresh-low} e \vars{thresh-high}, strettamente dipendenti dal contesto di applicazione.
+\begin{figure}[h]
+	\centering
+	\resizebox{\textwidth}{!}{
+		\subfloat[Input] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/canny-hed-input.png}}
+			}
+		}
+		\subfloat[][$\vars{thresh-low}=22$,\newline$\vars{thresh-high}=66$,\newline$\sigma=7$] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/canny-min22-sigma7.png}}
+			}
+		}
+		\subfloat[][$\vars{thresh-low}=55$,\newline$\vars{thresh-high}=165$,\newline$\sigma=6$] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/canny-min55-sigma6.png}}
+			}
+		}
+		\subfloat[][$\vars{thresh-low}=100$,\newline$\vars{thresh-high}=255$,\newline$\sigma=2$] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/canny-min100-sigma2.png}}
+			}
+		}
+	}
+	\caption{Operatore \textit{Canny} con diversi parametri} \label{fig:canny}
+\end{figure}
 
 \subsection{HED}
-
+L'approccio ideale per i problemi di \textit{edge detection} sarebbe quello di utilizzare un algoritmo che prende in input un'immagine e restituisce un'immagine binaria contenente informazioni sui bordi rilevanti dell'immagine in input, senza dover necessariamente impostare parametri diversi per contesti diversi.
+\textit{HED} (\textit{Holistically-nested Edge Detection}) \cite{bib:hed} cerca di superare i limiti dell'operatore \textit{Canny}, tramite l'implementazione di una rete neurale convoluzionale. Le specifiche di questa soluzione non rientrano negli obiettivi di questa tesi, ma nelle figure \ref{fig:canny} e \ref{fig:hed} presentiamo un esempio di immagine processata sia dall'operatore \textit{Canny} che dalla rete \textit{HED}, per poter confrontare i risultati ottenuti.
+\begin{figure}[h]
+	\centering
+	\resizebox{\textwidth}{!}{
+		\centering
+		\subfloat[Input] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/canny-hed-input.png}}
+			}
+		}
+		\subfloat[Output] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/hed-output.png}}
+			}
+		}
+		\subfloat[][Output con \textit{dilatazione}] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/hed-output-dilated.png}}
+			}
+		}
+	}
+	\caption{Rete \textit{HED}} \label{fig:hed}
+\end{figure}
 
 \section{Implementazione}
