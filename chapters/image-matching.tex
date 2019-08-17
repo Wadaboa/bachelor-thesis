@@ -153,8 +153,13 @@ oppure quello di \textit{Prewitt} \cite{bib:prewitt}:\\
 
 
 \subsection{Canny edge detector}
-
-
+L'operatore proposto da Canny \cite{bib:canny} per il rilevamento dei bordi \`e tutt'ora uno dei pi\`u utilizzati e viene considerato lo \textit{stato dell'arte} in questo campo. L'algoritmo \`e suddiviso in 3 passi:
+\begin{enumerate}
+	\item \textit{Pre-processing} $\gets$ Rimozione del \textit{noise} con un \textit{filtro di Gauss} di dimensione $\sigma$ e calcolo del gradiente tramite il \textit{filtro di Sobel}
+	\item \textit{Localizzazione dei bordi} $\gets$ Assottigliamento dei bordi con una procedura di \textit{nms} (\textit{non-maxima-suppression}). Vengono mantenuti solamente i punti di massimo locale, nella direzione del gradiente
+	\item \textit{Sogliatura con isterisi e tratteggio dei bordi} $\gets$ La \textit{sogliatura con isterisi} prevede l'utilizzo di due valori di soglia, \vars{thresh-low} e \vars{thresh-high}. Per ciascun punto $(u, v)$, se $|\nabla I(u, v)| \leq \vars{thresh-low}$ allora il punto viene automaticamente scartato, mentre se $|\nabla I(u, v)| \geq \vars{thresh-high}$ allora il punto viene automaticamente accettato come parte di un contorno. Nel caso in cui $\vars{thresh-low} < |\nabla I(u, v)| < \vars{thresh-high}$, allora il punto viene accettato solo se \textit{connesso} a un punto $(u', v')$ tale che $|\nabla I(u', v')| \geq \vars{thresh-high}$
+\end{enumerate}\par
+L'operatore \textit{Canny} permette di ottenere dei buoni risultati, con un impiego di risorse relativamente basso, ma ha lo svantaggio di dipendere dai 3 parametri $\sigma$, \vars{thresh-low} e \vars{thresh-high}, strettamente dipendenti dal contesto di applicazione.
 
 \subsection{HED}
 
