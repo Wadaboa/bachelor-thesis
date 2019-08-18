@@ -197,7 +197,7 @@ L'operatore \textit{Canny} permette di ottenere dei buoni risultati, con un impi
 \subsection{HED}
 \label{subsec:hed}
 L'approccio ideale per i problemi di \textit{edge detection} sarebbe quello di utilizzare un algoritmo che prende in input un'immagine e restituisce un'immagine binaria contenente informazioni sui bordi rilevanti dell'immagine in input, senza dover necessariamente impostare parametri diversi per contesti diversi.
-\textit{HED} (\textit{Holistically-nested Edge Detection}) \cite{bib:hed} cerca di superare i limiti dell'operatore \textit{Canny}, tramite l'implementazione di una rete neurale convoluzionale. Le specifiche di questa soluzione non rientrano negli obiettivi di questa tesi, ma nelle figure \ref{fig:canny} e \ref{fig:hed} presentiamo un esempio di immagine processata sia dall'operatore \textit{Canny} che dalla rete \textit{HED}, per poter confrontare i risultati ottenuti.
+\textit{HED} (\textit{Holistically-nested Edge Detection}) \cite{bib:hed} cerca di superare i limiti dell'operatore \textit{Canny}, tramite l'implementazione di una rete neurale convoluzionale (\textit{FCN - Fully Convolutional Network}). Le specifiche di questa soluzione non rientrano negli obiettivi di questa tesi, ma nelle figure \ref{fig:canny} e \ref{fig:hed} presentiamo un esempio di immagine processata sia dall'operatore \textit{Canny} che dalla rete \textit{HED}, per poter confrontare i risultati ottenuti.
 \begin{figure}[h]
 	\centering
 	\resizebox{\textwidth}{!}{

@@ -19,7 +19,7 @@ In figura \ref{fig:mser} un esempio di \textit{text detection} con l'utilizzo de
 		\centering
 		\subfloat[Input] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/mser-input.png}}
+				\frame{\includegraphics[width=.5\linewidth]{img/mser-east-input.png}}
 			}
 		}
 		\subfloat[Output] {%
@@ -38,4 +38,25 @@ In figura \ref{fig:mser} un esempio di \textit{text detection} con l'utilizzo de
 
 
 \section{EAST}
+L'approccio ideale per i problemi di \textit{text detection} sarebbe quello di utilizzare un algoritmo che prende in input un'immagine e restituisce una lista di rettangoli, in cui ciascun rettangolo identifica una regione di testo dell'immagine. In base al tipo di \textit{text detection} che si intende effettuare, non orientata o orientata, ciascun rettangolo \`e identificato, rispettivamente, da una coppia $(x, y)$, $lunghezza$ e $altezza$, oppure da 4 coppie $(x, y)$ per ciascun vertice del rettangolo. Osservando l'output prodotto da \textit{MSER} in figura \ref{fig:mser}, \`e possibile constatare che le regioni restituite non sono solamente quelle contenenti testo. Infatti, nell'esempio riportato, viene evidenziata anche la regione contenente il \textit{codice a barre} del documento.\par 
+\textit{EAST} (\textit{Efficient and Accurate Scene Text detector}) \cite{bib:east} cerca di superare i limiti di \textit{blob detector} come \textit{MSER}, tramite l'implementazione di una rete neurale convoluzionale (\textit{FCN - Fully Convolutional Network}). Le specifiche di questa soluzione non rientrano negli obiettivi di questa tesi, ma nelle figure \ref{fig:mser} e \ref{fig:east} presentiamo un esempio di immagine processata sia da \textit{MSER} che dalla rete \textit{EAST}, per poter confrontare i risultati ottenuti.
+\begin{figure}[h]
+	\centering
+	\resizebox{\textwidth}{!}{
+		\centering
+		\subfloat[Input] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/mser-east-input.png}}
+			}
+		}
+		\subfloat[Output] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.79\linewidth]{img/east-output.png}}
+			}
+		}
+	}
+	\caption{Text detection con \textit{EAST}} \label{fig:east}
+\end{figure}
+
+
 \section{Algoritmo proposto}
