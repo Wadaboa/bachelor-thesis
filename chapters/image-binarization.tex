@@ -4,7 +4,7 @@
 
 \section{Introduzione}
 \label{sec:image-bin-intro}
-Nel campo dell'\textit{image processing} ricopre un ruolo fondamentale la possibilit\`a di distinguere diversi oggetti, forme e contorni presenti nell'immagine in analisi. Per far ci\`o \`e possibile ricorrere a svariate metodologie, che sono strettamente dipendenti dal contesto in cui si intende operare. Per esempio, nel caso del \textit{riconoscimento ottico dei caratteri} (OCR), le operazioni che andranno descritte assumono importanza assoluta, dato che questo tipo di applicazione, per operare al meglio, ha spesso bisogno di ricevere in input un'immagine in bianco e nero, in cui lo sfondo \`e di colore bianco e il testo \`e di colore nero. Gli argomenti affrontati, nel caso di un'applicazione OCR, saranno soprattutto utili nel caso in cui il motore utilizzato sia \textit{open-source} (vedi \textit{Tesseract}), ovvero nel caso in cui un buon \textit{pre-processing} dell'immagine possa fare la differenza. In questo articolo andremo quindi ad analizzare gli \textit{algoritmi} pi\`u ricorrenti nell'ambito del \textit{thresholding} di immagini e nella sezione \ref{sec:image-bin-proposed-approach} affronteremo un approccio specificamente studiato per i casi d'uso della libreria QI-OCR.
+Nel campo dell'\textit{image processing} ricopre un ruolo fondamentale la possibilit\`a di distinguere diversi oggetti, forme e contorni presenti nell'immagine in analisi. Per far ci\`o \`e possibile ricorrere a svariate metodologie, che sono strettamente dipendenti dal contesto in cui si intende operare. Per esempio, nel caso del \textit{riconoscimento ottico dei caratteri} (\textit{OCR}), le operazioni che andranno descritte assumono importanza assoluta, dato che questo tipo di applicazione, per operare al meglio, ha spesso bisogno di ricevere in input un'immagine in bianco e nero, in cui lo sfondo \`e di colore bianco e il testo \`e di colore nero. Gli argomenti affrontati, nel caso di un'applicazione \textit{OCR}, saranno soprattutto utili nel caso in cui il motore utilizzato sia \textit{open-source} (vedi \textit{Tesseract}), ovvero nel caso in cui un buon \textit{pre-processing} dell'immagine possa fare la differenza. In questo capitolo andremo quindi ad analizzare gli \textit{algoritmi} pi\`u ricorrenti nell'ambito del \textit{thresholding} di immagini e nella sezione \ref{sec:image-bin-proposed-approach} affronteremo un approccio specificamente studiato per i casi d'uso della libreria QI-OCR.
 
 Da qui in avanti ipotizzeremo di lavorare con immagini originali in \textit{scala di grigi} con profondit\`a 8 bit, anche se i metodi descritti possono facilmente essere generalizzati per immagini con pi\`u di un canale colore.
 
@@ -20,7 +20,7 @@ Nel caso in cui il contesto in cui si opera sia relativamente statico, la \texti
 		\Function{global-thresholding}{}
 			\State $\vars{image} \gets \text{input image}$
 			\State $\vars{thresh} \gets \text{threshold value}$
-			
+			\\
 			\For {$\vars{i} \text{ in \textproc{rows}(\vars{image})}$}
 				\For {$\vars{j} \text{ in \textproc{columns}(\vars{image})}$}
 					\If {$\vars{image[i][j]} \geq \vars{thresh}$}
@@ -54,7 +54,7 @@ Purtroppo, il problema principale della sogliatura adattativa \`e che tende a va
 	\begin{algorithmic}[1]
 		\Function{local-thresholding}{}
 			\State $\vars{image} \gets \text{input image}$
-			
+			\\
 			\For {$\vars{pixel} \text{ in \vars{image}}$}
 				\State $\vars{thresh} \gets \textproc{statistical-operator(\textproc{neighbors(pixel)})}$
 				\If {$\vars{pixel} \geq \vars{thresh}$}
@@ -86,15 +86,15 @@ Questo tipo di sogliatura utilizza tecniche di analisi dell'\textit{istogramma}\
 	}
 	\caption{Istogramma bimodale} \label{fig:bimodal-hist}
 \end{figure}
-Nel caso in cui l'immagine in analisi non presenti esattamente due massimi locali nella funzione istogramma, il procedimento di Otsu potrebbe per\`o portare a risultati indesiderati.
+Nel caso in cui l'immagine in analisi non presenti esattamente due massimi locali nella funzione istogramma, il procedimento di \textit{Otsu} potrebbe per\`o portare a risultati indesiderati.
 
 
 \section{Sogliatura proposta}
 \label{sec:image-bin-proposed-approach}
-In questa sezione andiamo a descrivere un algoritmo pensato e implementato per la \textit{segmentazione} di immagini contenenti \textit{testo nero su uno sfondo colorato}, arricchito di decorazioni, simboli e varie grafiche, per ottenere un'immagine correttamente processabile da motori OCR (in particolare da quelli open-source, come \textit{Tesseract}).\par
+In questa sezione andiamo a descrivere un algoritmo pensato e implementato per la \textit{segmentazione} di immagini contenenti \textit{testo nero su uno sfondo colorato}, arricchito di decorazioni, simboli e varie grafiche, per ottenere un'immagine correttamente processabile da motori \textit{OCR} (in particolare da quelli \textit{open-source}, come \textit{Tesseract}).\par
 L'approccio precedentemente adottato dalla libreria QI-OCR prevedeva la scelta mirata di diversi livelli di sogliatura per ciascun campo del documento in analisi, effettuando cos\`i una serie di operazioni di sogliatura globale e di conseguenti chiamate al motore OCR, per poi scegliere il risultato migliore a posteriori. Il problema principale di questo metodo riguarda la scarsa efficienza dal punto di vista computazionale, in quanto il tempo di esecuzione per effettuare un'operazione di sogliatura globale e per ricevere l'output dal motore OCR \`e di circa $1s$\footnote{L'elevato tempo di esecuzione \`e dato principalmente dalla chiamata al motore OCR. Per esempio, nel caso di \textit{Tesseract}, in \textit{Python} non esiste una vera e propria API ufficiale ed \`e dunque necessario utilizzare un \textit{wrapper} che effettua chiamate al software di sistema, introducendo \textit{overhead}.}. Considerando che, in alcuni casi, il numero di soglie da applicare a un particolare campo poteva arrivare anche fino a 10, il tempo di esecuzione per la sola operazione di OCR sarebbe stato all'incirca $10s$.\par
 Il percorso che ha portato alla soluzione descritta in seguito \`e passato da due strade fallimentari:
-la prima prevedeva l'analisi delle componenti connesse dell'immagine in input, come descritto in \cite{bib:text-extraction}, mentre la seconda prevedeva l'implementazione di una rete neurale convoluzionale, allenata a partire da associazioni \textit{campo} - \textit{soglia} prestabilite. Purtroppo, entrambi i tentativi non hanno ritornato i risultati sperati: nel primo caso per una mancanza di strumenti adatti, mentre nel secondo per la mancanza di una conoscenza approfondita del settore.\par
+la prima prevedeva l'analisi delle componenti connesse dell'immagine in input, come descritto in \cite{bib:text-extraction}, mentre la seconda prevedeva l'implementazione di una rete neurale convoluzionale (\textit{CNN - Convolutional Neural Network}), allenata a partire da associazioni \textit{campo} - \textit{soglia} prestabilite. Purtroppo, entrambi i tentativi non hanno ritornato i risultati sperati: nel primo caso per una mancanza di strumenti adatti, mentre nel secondo per la mancanza di una conoscenza approfondita del settore.\par
 Consideriamo l'immagine \ref{fig:image-bin-proposed-approach-input} come esempio per l'analisi delle operazioni che andremo a descrivere.
 \begin{figure}[h]
 	\centering
@@ -106,7 +106,8 @@ Consideriamo l'immagine \ref{fig:image-bin-proposed-approach-input} come esempio
 \subsection{Trasformazione comune}
 \label{subsec:image-bin-proposed-approach-common}
 Il primo passaggio riguarda un'insieme di operazioni che restituiranno in output un'immagine che verr\`a utilizzata come input sia per la fase descritta in \ref{subsec:image-bin-proposed-approach-simple} che per quella in \ref{subsec:image-bin-proposed-approach-complex}.\par
-In particolare, prima di tutto l'immagine originale viene \textit{ridimensionata} di un determinato fattore di scala, che empiricamente \`e stato posto pari a $3$. Dopodich\`e viene applicato un \textit{clip} superiore dell'immagine al valor medio assunto dai pixel ($mean$). Questa operazione permette di equalizzare l'istogramma dell'immagine, andando immediatamente a rimuovere varie componenti di \textit{background}, limitando superiormente i pixel dell'immagine al valore $mean - c$, con $c$ costante arbitraria, che nel nostro caso d'uso \`e stata posta pari a $30$. Il problema principale di questa operazione riguarda l'eliminazione di informazione utile nel caso in cui il testo presente sia sufficientemente sbiadito.
+In particolare, prima di tutto l'immagine originale viene \textit{ridimensionata} di un determinato fattore di scala, che empiricamente \`e stato posto pari a $3$. Dopodich\`e viene applicato un \textit{clip} superiore dell'immagine al valor medio assunto dai pixel ($mean$). Questa operazione permette di equalizzare l'istogramma dell'immagine, andando immediatamente a rimuovere varie componenti di \textit{background}, limitando superiormente i pixel dell'immagine al valore $mean - c$, con $c$ costante arbitraria, che nel nostro caso d'uso \`e stata posta pari a $30$.\par
+Il problema principale di questa operazione riguarda l'eliminazione di informazione utile nel caso in cui il testo presente sia sufficientemente sbiadito.
 \begin{figure}[h]
 	\centering
 	\frame{\includegraphics[width=\linewidth]{img/image-bin-proposed-approach-common.png}}
@@ -138,7 +139,7 @@ Il punto \ref{enum:image-bin-proposed-approach-simple-otsu} viene utilizzato per
 	\caption{Output \textit{bounding boxes} caratteri sogliatura proposta}
 	\label{fig:image-bin-proposed-approach-chars}
 \end{figure}
-Il punto \ref{enum:image-bin-proposed-approach-simple-cut} utilizza una sorta di strategia di \textit{clustering}, che prevede prima di tutto l'individuazione dei contorni presenti nell'immagine, tramite l'algoritmo \textit{Canny edge detector}, e da questi la definizione dei vari \textit{bounding boxes}, ovvero dei minimi rettangoli contenenti ciascuna forma riconosciuta. A questo punto i \textit{bounding boxes} vengono filtrati in base alla dimensione, eliminando quelli troppo piccoli (\textit{noise}) e mantenendo solamente quelli della giusta dimensione, pari all'incirca alla dimensione del font utilizzato. A partire dai \textit{bounding boxes} viene poi calcolato il valore di ordinata pi\`u frequente, arrotondato alla decina pi\`u vicina, e il massimo valore di altezza fra tutti, che vengono utilizzati per effettuare un taglio preciso dell'immagine al rettangolo che si suppone contenga il testo di interesse. Ovviamente l'approccio di ritaglio utilizzato \`e efficace solamente nel caso in cui il testo sia l'elemento preminente nell'immagine.
+Il punto \ref{enum:image-bin-proposed-approach-simple-cut} utilizza una sorta di strategia di \textit{clustering}, che prevede prima di tutto l'individuazione dei contorni presenti nell'immagine, tramite l'algoritmo \textit{Canny edge detector}, descritto in \ref{subsec:canny}, e da questi la definizione dei vari \textit{bounding boxes}, ovvero dei minimi rettangoli contenenti ciascuna forma riconosciuta. A questo punto i \textit{bounding boxes} vengono filtrati in base alla dimensione, eliminando quelli troppo piccoli (\textit{noise}) e mantenendo solamente quelli della giusta dimensione, pari all'incirca alla dimensione del font utilizzato. A partire dai \textit{bounding boxes} viene poi calcolato il valore di ordinata pi\`u frequente, arrotondato alla decina pi\`u vicina, e il massimo valore di altezza fra tutti, che vengono utilizzati per effettuare un taglio preciso dell'immagine al rettangolo che si suppone contenga il testo di interesse. Ovviamente l'approccio di ritaglio utilizzato \`e efficace solamente nel caso in cui il testo sia l'elemento preminente nell'immagine.
 \begin{figure}[H]
 	\centering
 	\frame{\includegraphics[width=\linewidth]{img/image-bin-proposed-approach-simple.png}}
@@ -231,5 +232,5 @@ Per dare un'idea pi\`u mirata delle migliorie relative ai tempi di esecuzione ab
 	}
 	\caption{Benchmark con modifiche (campione 2)}
 \end{table}
-Dunque, possiamo notare che l'accuratezza \`e rimasta la stessa, il tempo totale impiegato \`e effettivamente dimezzato, mentre il tempo necessario a effettuare le operazioni di OCR \`e diminuito di circa 4 volte.\par
-I \textit{benchmark} effettuati sono stati prodotti utilizzando \textit{SIFT} come algoritmo di localizzazione del documento e l'accuratezza media \`e stata valutata utilizzando un algoritmo per il calcolo della similitudine tra due stringhe\footnote{L'algoritmo menzionato \`e quello di \textit{Ratcliff/Obershelp}.}. In particolare, l'accuratezza media \`e data dalla media delle accuratezze di ogni singolo documento processato, dove l'accuratezza di un documento \`e data dalla media delle accuratezze su ogni singolo campo e l'accuratezza su un campo \`e la misura della distanza della stringa prodotta dal motore OCR e la stringa effettiva, derivata da osservazioni dirette (\textit{ground-truth}).
+Dunque, possiamo notare che l'accuratezza \`e rimasta la stessa, il tempo totale impiegato \`e effettivamente dimezzato, mentre il tempo necessario a effettuare le operazioni di \textit{OCR} \`e diminuito di circa 4 volte.\par
+I \textit{benchmark} effettuati sono stati prodotti utilizzando \textit{SIFT} come algoritmo di localizzazione del documento e l'accuratezza media \`e stata valutata utilizzando un algoritmo per il calcolo della similitudine tra due stringhe\footnote{L'algoritmo menzionato \`e quello di \textit{Ratcliff/Obershelp}.}. In particolare, l'accuratezza media \`e data dalla media delle accuratezze di ogni singolo documento processato, dove l'accuratezza di un documento \`e data dalla media delle accuratezze su ogni singolo campo e l'accuratezza su un campo \`e la misura della distanza della stringa prodotta dal motore \textit{OCR} e la stringa effettiva, derivata da osservazioni dirette (\textit{ground-truth}).

@@ -93,6 +93,11 @@ Alcuni esempi di filtri classici:
 \subsection{Basi della matematica morfologica}
 \label{subsec:math-morph-basis}
 La matematica morfologica \`e una collezione di operatori, basata sulla teoria degli insiemi e definita su una struttura astratta\footnote{La struttura astratta alla quale si fa riferimento \`e un \textit{reticolo} infinito, un'estensione della teoria degli insiemi di Minkowski.}. Il suo obiettivo \`e quello di analizzare le forme e gli oggetti di un'immagine digitale, attraverso trasformazioni quali erosione, dilatazione, apertura, chiusura e altre. Nella loro forma originaria le operazioni morfologiche prevedono l'utilizzo di un'\textit{immagine binaria} a singolo canale, composta da pixel che possono assumere solo due valori, 1 e 0, bianco e nero, \textit{foreground} e \textit{background}, oltre che di un \textit{elemento strutturante} (\textit{SE}), anch'esso sotto forma di immagine binaria a singolo canale, generalmente di dimensione molto minore di quella dell'immagine originale. Per correttezza, da ora in poi, in questa sezione, considereremo un'immagine binaria \textit{I} anche come un insieme di punti $Q_{I}$ contenente tutte le coppie $(u,v)$ di pixel \textit{foreground} di \textit{I}, ovvero tali che $I(u, v) = 1$ e considereremo i termini in \textbf{grassetto} come coppie ordinate $(u,v) \in \mathbb{N}\times\mathbb{N}$.\par
+Il risultato dell'operazione di \textit{erosione} di un'immagine mostra dove lo SE viene contenuto negli oggetti dell'immagine, ovvero, intuitivamente permette di rimuovere pixel dal contorno di \textit{componenti connesse}\footnote{Una \textit{componente connessa} \textit{C} di un insieme di punti \textit{foreground} $P$ di un'immagine binaria $I$ \`e un insieme $C\subseteq P$ tale che $\forall \textbf{p}_{i}, \textbf{p}_{j} \in C$ esiste un percorso $\textbf{p}_{i}, \dots, \textbf{p}_{j}$ in cui ogni $\textbf{p}_{h}$ \`e \textit{k-vicino} (\textit{4-vicino} o \textit{8-vicino}) a $\textbf{p}_{h-1}$ e $\neg \exists \textbf{q}\notin P$ \textit{k-adiacente} a un punto di $P$ \cite{bib:binary-images-connectivity}.} di colore bianco, in quantit\`a dipendente dalla grandezza dello SE. In formule:
+\begin{equation}
+	\label{eq:erosion}
+	[\epsilon_{Q_{SE}}(I)](\textbf{x}) = \underset{\textbf{s}\in Q_{SE}}{\bigwedge}(I(\textbf{x}+\textbf{s}))
+\end{equation}\par
 \begin{figure}[t]
 	\centering
 	\subfloat[Prima (dopo)] {
@@ -111,11 +116,6 @@ La matematica morfologica \`e una collezione di operatori, basata sulla teoria d
 	}
 	\caption{Erosione (dilatazione) morfologica con elemento strutturante rettangolare} \label{fig:erosion-dilation}
 \end{figure}
-Il risultato dell'operazione di \textit{erosione} di un'immagine mostra dove lo SE viene contenuto negli oggetti dell'immagine, ovvero, intuitivamente permette di rimuovere pixel dal contorno di \textit{componenti connesse}\footnote{Una \textit{componente connessa} \textit{C} di un insieme di punti \textit{foreground} $P$ di un'immagine binaria $I$ \`e un insieme $C\subseteq P$ tale che $\forall \textbf{p}_{i}, \textbf{p}_{j} \in C$ esiste un percorso $\textbf{p}_{i}, \dots, \textbf{p}_{j}$ in cui ogni $\textbf{p}_{h}$ \`e \textit{k-vicino} (\textit{4-vicino} o \textit{8-vicino}) a $\textbf{p}_{h-1}$ e $\neg \exists \textbf{q}\notin P$ \textit{k-adiacente} a un punto di $P$ \cite{bib:binary-images-connectivity}.} di colore bianco, in quantit\`a dipendente dalla grandezza dello SE. In formule:
-\begin{equation}
-	\label{eq:erosion}
-	[\epsilon_{Q_{SE}}(I)](\textbf{x}) = \underset{\textbf{s}\in Q_{SE}}{\bigwedge}(I(\textbf{x}+\textbf{s}))
-\end{equation}\par
 Il risultato dell'operazione di \textit{dilatazione} di un'immagine mostra dove lo SE tocca gli oggetti dell'immagine, ovvero, intuitivamente permette di aggiungere pixel al contorno di componenti connesse di colore bianco, in quantit\`a dipendente dalla grandezza dello SE. In formule:
 \begin{equation}
 	\label{eq:dilation}
