@@ -4,12 +4,19 @@
 
 \section{Immagini digitali}
 \label{sec:math-images}
-Un'immagine digitale \textit{I} con risoluzione $m\times n$ \`e una matrice di valori interi di dimensione $n\times m$, che pu\`o essere matematicamente interpretata come una funzione semplice (n\`e iniettiva n\`e suriettiva) \textit{I}: $\mathbb{N}\times\mathbb{N}\supseteq X \to \mathbb{P}^{c}$, che si occupa di mappare una coppia ordinata $(u,v)\in\mathbb{N}\times\mathbb{N}$, con $u,v\in\mathbb{N}$, in una \textit{c-upla} $p=(p_{1}, p_{2}, \dots, p_{c})$, in cui ciascun valore $p_{i}$ di $p$ rappresenta il valore del pixel associato nel canale ${i}$, con $0 \leq p_{i} \leq 2^{b} - 1$, dove $b$ \`e il numero fissato di bit utilizzati per rappresentare ciascun pixel e $2^{b}$ indica il massimo numero di colori o di livelli di grigio utilizzabili. Per esempio, ipotizzando di utilizzare canali colore standard, nel caso in cui si lavori con immagini in scala di grigi si avr\`a $c=1$, mentre nel caso in cui si lavori con immagini \textit{RGB} si avr\`a $c=3$ ($c=4$ per immagini \textit{RGBA} o \textit{CMYK}). Inoltre, supponendo di utilizzare una profondit\`a pari a $b=8$ sar\`a possibile specificare interi compresi tra $0$ e $255$ per i valori di ciascun pixel. Infine, indichiamo la risoluzione dell'immagine come la coppia $(m, n)\in\mathbb{N}\times\mathbb{N}\colon(n, m)=\max_{(x, y)\in X} (x,y)$.
+Un'immagine digitale \textit{I} con risoluzione $m\times n$ \`e una matrice di valori interi di dimensione $n\times m$, che pu\`o essere matematicamente interpretata come una funzione semplice (n\`e iniettiva, n\`e suriettiva) 
+\begin{equation}
+	I: \mathbb{N}\times\mathbb{N}\supseteq X \to P^{c}\subseteq \mathbb{N}^{c},
+	\label{eq:digital-image-function}
+\end{equation}
+che si occupa di mappare una coppia ordinata $(u,v)\in\mathbb{N}\times\mathbb{N}$, con $u,v\in\mathbb{N}$, in una \textit{c-upla} $p=(p_{1}, p_{2}, \dots, p_{c})\in\mathbb{N}^{c}$, in cui ciascun $p_{i}$ di $p$ rappresenta il valore del pixel in posizione $(u,v)$ nel canale ${i}$ dell'immagine, con $0 \leq p_{i} \leq 2^{b} - 1$, dove $b$ \`e il numero fissato di bit utilizzati per rappresentare ciascun pixel e $2^{b}$ indica il massimo numero di colori o di livelli di grigio rappresentabili.\par
+Per esempio, ipotizzando di utilizzare canali colore standard, nel caso in cui si lavori con immagini in scala di grigi si avr\`a $c=1$, mentre nel caso in cui si lavori con immagini \textit{RGB} si avr\`a $c=3$ ($c=4$ per immagini \textit{RGBA} o \textit{CMYK}). Inoltre, supponendo di utilizzare una profondit\`a pari a $b=8$ sar\`a possibile specificare interi compresi tra $0$ e $255$ per i valori di ciascun pixel.
 
 
 \section{Convoluzione}
 \label{sec:math-convolution}
-La \textit{convoluzione} \`e un'operazione alla base dell'\textit{image processing}, grazie alla quale \`e possibile andare ad analizzare ed eventualmente accentuare o alleviare diversi aspetti di una data immagine, come la sfocatura, la nitidezza, i contorni e molto altro. L'operazione, che viene descritta nella forma discreta, prende dunque in input due immagini digitali, ovvero l'immagine originale \textit{I} (normalmente un singolo canale) e l'immagine $K$, denominata \textit{kernel}, e intuitivamente si occupa di far scorrere la matrice $K$ sull'immagine $I$, generalmente a partire dal bordo in alto a sinistra, effettuando una somma pesata dei valori di $I$ dati dalle proiezioni delle posizioni correntemente analizzate dalla matrice $K$, in cui i pesi sono dati proprio dagli elementi di $K$. Solitamente la dimensione della matrice $K$ \`e molto minore della dimensione dell'immagine originale e spesso $K$ \`e una matrice quadrata $n\times n$, con $n$ dispari. Pi\`u formalmente, l'operazione di \textit{convoluzione} $I * K$ in un punto $(i,j)$ \`e data da:
+La \textit{convoluzione} \`e un'operazione alla base dell'\textit{image processing}, grazie alla quale \`e possibile andare ad analizzare ed eventualmente accentuare o alleviare diversi aspetti di una data immagine, come la sfocatura, la nitidezza, i contorni e molto altro. L'operazione, che viene descritta nella forma discreta, prende in input due immagini digitali, ovvero l'immagine originale \textit{I} (normalmente un singolo canale) e l'immagine $K$, denominata \textit{kernel}, e intuitivamente si occupa di far scorrere la matrice $K$ sull'immagine $I$, generalmente a partire dal pixel in alto a sinistra, effettuando una somma pesata dei valori di $I$ dati dalle proiezioni delle posizioni correntemente analizzate dalla matrice $K$, in cui i pesi sono dati proprio dagli elementi di $K$. Solitamente la dimensione della matrice $K$ \`e molto minore della dimensione dell'immagine originale e spesso $K$ \`e una matrice quadrata $n\times n$, con $n$ dispari.\par
+Pi\`u formalmente, l'operazione di \textit{convoluzione} $I * K$ in un punto $(i,j)$ \`e data da:
 \begin{equation}
 	\label{eq:convolution}
 	\begin{split}
@@ -24,8 +31,10 @@ Nel caso in cui nella formula \ref{eq:convolution} i segni \textit{-} e \textit{
 		I^{\otimes}(i, j) & = \sum_{x = -n}^{n}\sum_{y = -n}^{n}(I(i+x, j+y)\cdot K(x,y))=\\
 		& = \sum_{x = 1}^{n}\sum_{y = 1}^{n}(I(i - \left\lceil{\dfrac{n}{2}}\right\rceil + x, j - \left\lceil{\dfrac{n}{2}}\right\rceil + y)\cdot K(x,y))
 	\end{split}
-\end{equation}
-\textit{Convoluzione} e \textit{correlazione} possono risultare equivalenti se per passare da un'operazione all'altra si effettua un ribaltamento orizzontale e verticale del filtro (graficamente $K$ viene ruotata di $180^{\circ}$). Dunque le due operazioni risultano identiche nel caso in cui la matrice $K$ sia simmetrica rispetto ai due assi. In particolare, si preferisce utilizzare la convoluzione quando sono necessarie le propriet\`a commutativa, associativa e distributiva. Inoltre, dato che spesso il risultato delle operazioni descritte viene utilizzato come valore di intensit\`a di pixel, tale risultato viene normalizzato, dividendolo per la somma dei pesi del filtro. La complessit\`a computazionale delle operazioni, data ad esempio un'immagine di dimensione $m\times m$ e un kernel di dimensione $n\times n$, \`e piuttosto elevata, dato che richiede un numero di moltiplicazioni pari a $n^{2}\cdot m^{2}$ e altrettante somme. Di seguito un esempio di convoluzione e correlazione:
+\end{equation}\par
+\textit{Convoluzione} e \textit{correlazione} possono risultare equivalenti se per passare da un'operazione all'altra si effettua un ribaltamento orizzontale e verticale del filtro (graficamente $K$ viene ruotata di $180^{\circ}$). Dunque le due operazioni risultano identiche nel caso in cui la matrice $K$ sia simmetrica rispetto ai due assi. Nella pratica, si preferisce utilizzare la \textit{convoluzione} quando sono necessarie le propriet\`a commutativa, associativa e distributiva. Inoltre, dato che spesso il risultato delle operazioni descritte viene utilizzato come valore di intensit\`a di pixel, tale risultato viene normalizzato, dividendolo per la somma dei pesi del filtro.\par
+La complessit\`a computazionale delle operazioni, data ad esempio un'immagine di dimensione $m\times m$ e un kernel di dimensione $n\times n$, \`e piuttosto elevata, dato che richiede un numero di moltiplicazioni pari a $n^{2}\cdot m^{2}$ e altrettante somme.\par
+Di seguito un esempio di \textit{convoluzione} e \textit{correlazione}:
 $$
 I=\bordermatrix{
 		& & & j & & \cr
@@ -41,9 +50,23 @@ K=\begin{pmatrix}
 	-6 & 0 & 4
 \end{pmatrix}
 $$
-Calcoliamo $I * K$ nella posizione $(i, j)$ come $$I^{*}(i, j) = 18\cdot 4 - 22\cdot 2 + 29\cdot 1 - 10\cdot 1+ 26\cdot 5 -27\cdot 3 - 32\cdot 6 + 28\cdot 0 + 30\cdot 4 = 24,$$
-mentre calcoliamo $I \otimes K$ nella posizione $(i, j)$ come $$I^{\otimes}(i, j) = 30\cdot 4 - 28\cdot 2 + 32\cdot 1 - 27\cdot 1+ 26\cdot 5 -10\cdot 3 - 29\cdot 6 + 22\cdot 0 + 18\cdot 4 = 67$$
-Un problema che pu\`o risultare evidente riguarda il modo di trattare i bordi, nel caso in cui l'intorno di un pixel non sia disponibile. Per ovviare a tale problema esistono diverse tecniche valide, come ipotizzare che i pixel non disponibili abbiano intensit\`a zero, oppure prolungare i pixel di bordo supponendo intensit\`a costante in quelli non disponibili.\\
+Calcoliamo $I * K$ nella posizione $(i, j)$ come 
+\begin{equation}
+	\label{eq:convolution-example}
+	\begin{split}
+		I^{*}(i, j) & = 18\cdot 4 - 22\cdot 2 + 29\cdot 1 - 10\cdot 1+\\ 
+		& + 26\cdot 5 -27\cdot 3 - 32\cdot 6 + 28\cdot 0 + 30\cdot 4 = 24,
+	\end{split}
+\end{equation}
+mentre calcoliamo $I \otimes K$ nella posizione $(i, j)$ come 
+\begin{equation}
+	\label{eq:correlation-example}
+	\begin{split}
+		I^{\otimes}(i, j) & = 30\cdot 4 - 28\cdot 2 + 32\cdot 1 - 27\cdot 1+\\
+		& + 26\cdot 5 -10\cdot 3 - 29\cdot 6 + 22\cdot 0 + 18\cdot 4 = 67
+	\end{split}
+\end{equation}\par
+Un problema che pu\`o risultare evidente riguarda il modo di trattare i bordi, nel caso in cui l'intorno di un pixel non sia disponibile. Per ovviare a tale problema esistono diverse tecniche valide, come ipotizzare che i pixel non disponibili abbiano intensit\`a zero, oppure prolungare i pixel di bordo supponendo intensit\`a costante in quelli non disponibili.\par
 Alcuni esempi di filtri classici:
 \begin{itemize}
 	\item Sfocatura (filtro di \textit{Gauss}): $\begin{pmatrix} 
@@ -69,7 +92,7 @@ Alcuni esempi di filtri classici:
 
 \subsection{Basi della matematica morfologica}
 \label{subsec:math-morph-basis}
-La matematica morfologica \`e una collezione di operatori, basata sulla teoria degli insiemi e definita su una struttura astratta\footnote{La struttura astratta alla quale si fa riferimento \`e un \textit{reticolo} infinito, un'estensione della teoria degli insiemi di Minkowski.}. Il suo obiettivo \`e quello di analizzare le forme e gli oggetti di un'immagine digitale, attraverso trasformazioni quali erosione, dilatazione, apertura, chiusura e altre. Nella loro forma originaria le operazioni morfologiche prevedono l'utilizzo di un'\textit{immagine binaria} a singolo canale, composta da pixel che possono assumere solo due valori, 1 e 0, bianco e nero, \textit{foreground} e \textit{background}, oltre che di un \textit{elemento strutturante} (\textit{SE}), anch'esso sotto forma di immagine binaria a singolo canale, generalmente di dimensione molto minore di quella dell'immagine originale. Per correttezza, da ora in poi, in questa sezione, considereremo un'immagine binaria \textit{I} anche come un insieme di punti $Q_{I}$ contenente tutte le coppie $(u,v)$ di pixel \textit{foreground} di \textit{I}, ovvero tali che $I(u, v) = 1$ e considereremo i termini in \textbf{grassetto} come coppie ordinate $(u,v) \in \mathbb{N}\times\mathbb{N}$.
+La matematica morfologica \`e una collezione di operatori, basata sulla teoria degli insiemi e definita su una struttura astratta\footnote{La struttura astratta alla quale si fa riferimento \`e un \textit{reticolo} infinito, un'estensione della teoria degli insiemi di Minkowski.}. Il suo obiettivo \`e quello di analizzare le forme e gli oggetti di un'immagine digitale, attraverso trasformazioni quali erosione, dilatazione, apertura, chiusura e altre. Nella loro forma originaria le operazioni morfologiche prevedono l'utilizzo di un'\textit{immagine binaria} a singolo canale, composta da pixel che possono assumere solo due valori, 1 e 0, bianco e nero, \textit{foreground} e \textit{background}, oltre che di un \textit{elemento strutturante} (\textit{SE}), anch'esso sotto forma di immagine binaria a singolo canale, generalmente di dimensione molto minore di quella dell'immagine originale. Per correttezza, da ora in poi, in questa sezione, considereremo un'immagine binaria \textit{I} anche come un insieme di punti $Q_{I}$ contenente tutte le coppie $(u,v)$ di pixel \textit{foreground} di \textit{I}, ovvero tali che $I(u, v) = 1$ e considereremo i termini in \textbf{grassetto} come coppie ordinate $(u,v) \in \mathbb{N}\times\mathbb{N}$.\par
 \begin{figure}[t]
 	\centering
 	\subfloat[Prima (dopo)] {
@@ -88,28 +111,16 @@ La matematica morfologica \`e una collezione di operatori, basata sulla teoria d
 	}
 	\caption{Erosione (dilatazione) morfologica con elemento strutturante rettangolare} \label{fig:erosion-dilation}
 \end{figure}
-\par Di seguito una descrizione degli operatori morfologici di base:\\
-Il risultato dell'operazione di \textit{erosione} di un'immagine mostra dove lo SE viene contenuto negli oggetti dell'immagine, ovvero, intuitivamente permette di rimuovere pixel dal contorno di \textit{componenti connesse}\footnote{Una \textit{componente connessa} \textit{C} di un insieme di punti \textit{foreground} $P$ di un'immagine binaria $I$ \`e un insieme $C\subseteq P$ tale che $\forall \textbf{p}_{1}, \textbf{p}_{n} \in C$ esiste un percorso $\textbf{p}_{1}, \dots, \textbf{p}_{n}$ in cui ogni $\textbf{p}_{i}$ \`e \textit{k-vicino} (\textit{4-vicino} o \textit{8-vicino}) a $\textbf{p}_{i-1}$ e $\neg \exists \textbf{q}\notin P$ \textit{k-adiacente} a un punto di $P$ \cite{bib:binary-images-connectivity}.} di colore bianco, in quantit\`a dipendente dalla grandezza dello SE. In formule:
+Il risultato dell'operazione di \textit{erosione} di un'immagine mostra dove lo SE viene contenuto negli oggetti dell'immagine, ovvero, intuitivamente permette di rimuovere pixel dal contorno di \textit{componenti connesse}\footnote{Una \textit{componente connessa} \textit{C} di un insieme di punti \textit{foreground} $P$ di un'immagine binaria $I$ \`e un insieme $C\subseteq P$ tale che $\forall \textbf{p}_{i}, \textbf{p}_{j} \in C$ esiste un percorso $\textbf{p}_{i}, \dots, \textbf{p}_{j}$ in cui ogni $\textbf{p}_{h}$ \`e \textit{k-vicino} (\textit{4-vicino} o \textit{8-vicino}) a $\textbf{p}_{h-1}$ e $\neg \exists \textbf{q}\notin P$ \textit{k-adiacente} a un punto di $P$ \cite{bib:binary-images-connectivity}.} di colore bianco, in quantit\`a dipendente dalla grandezza dello SE. In formule:
 \begin{equation}
 	\label{eq:erosion}
 	[\epsilon_{Q_{SE}}(I)](\textbf{x}) = \underset{\textbf{s}\in Q_{SE}}{\bigwedge}(I(\textbf{x}+\textbf{s}))
-\end{equation}
+\end{equation}\par
 Il risultato dell'operazione di \textit{dilatazione} di un'immagine mostra dove lo SE tocca gli oggetti dell'immagine, ovvero, intuitivamente permette di aggiungere pixel al contorno di componenti connesse di colore bianco, in quantit\`a dipendente dalla grandezza dello SE. In formule:
 \begin{equation}
 	\label{eq:dilation}
 	[\delta_{Q_{SE}}(I)](\textbf{x}) = \underset{\textbf{s}\in Q_{SE}}{\bigvee}(I(\textbf{x}+\textbf{s}))
 \end{equation}
-
-Le operazioni di \textit{apertura} (\textit{chiusura}) sono invece la combinazione in sequenza di erosione (dilatazione) e dilatazione (erosione) dello SE con la propria \textit{riflessione}\footnote{La \textit{riflessione} di un insieme di punti $P$ di un'immagine binaria $I$ rispetto all'origine viene definita come $\check{P}=\{(-u,-v) \colon (u,v)\in P\}$.}. Queste due operazioni vengono molto utilizzate per rimuovere "sporco" (\textit{noise}) dalle immagini e per "chiudere" piccoli "buchi" all'interno di oggetti che si trovano nel \textit{foreground}. In formule:
-\begin{equation}
-	\label{eq:opening}
-	\gamma_{Q_{SE}}(I) = \delta_{\check{Q_{SE}}}(\epsilon_{Q_{SE}}(I)),
-\end{equation}
-\begin{equation}
-	\label{eq:closing}
-	\phi_{Q_{SE}}(I) = \epsilon_{\check{Q_{SE}}}(\delta_{Q_{SE}}(I))
-\end{equation}
-\par
 
 \begin{figure}[t]
 	\centering
@@ -134,6 +145,16 @@ Le operazioni di \textit{apertura} (\textit{chiusura}) sono invece la combinazio
 	\caption{Apertura morfologica con elemento strutturante circolare} \label{fig:opening}
 \end{figure}
 
+Le operazioni di \textit{apertura} (\textit{chiusura}) sono invece la combinazione in sequenza di erosione (dilatazione) e dilatazione (erosione) dello SE con la propria \textit{riflessione}\footnote{La \textit{riflessione} di un insieme di punti $P$ di un'immagine binaria $I$ rispetto all'origine viene definita come $\check{P}=\{(-u,-v) \colon (u,v)\in P\}$.}. Queste due operazioni vengono molto utilizzate per rimuovere "sporco" (\textit{noise}) dalle immagini e per "chiudere" piccoli "buchi" all'interno di oggetti che si trovano nel \textit{foreground}. In formule:
+\begin{equation}
+	\label{eq:opening}
+	\gamma_{Q_{SE}}(I) = \delta_{\check{Q_{SE}}}(\epsilon_{Q_{SE}}(I)),
+\end{equation}
+\begin{equation}
+	\label{eq:closing}
+	\phi_{Q_{SE}}(I) = \epsilon_{\check{Q_{SE}}}(\delta_{Q_{SE}}(I))
+\end{equation}
+
 \subsection{Ricostruzione morfologica}
 \label{subsec:math-morph-reconstruction}
 La \textit{ricostruzione} \`e un'operazione molto utile nella matematica morfologica, che viene spesso presentata come un insieme di operatori \textit{geodetici}, che consentono di estrarre le componenti connesse dell'immagine originale, marcate da un'altra immagine \textit{marker}. Dunque, gli operatori di \textit{erosione} e \textit{dilatazione} possono essere ridefiniti in senso \textit{geodetico}. In particolare, consideriamo al solito un'immagine binaria \textit{I} (\textit{mask}), definita dal suo insieme di punti \textit{foreground} $Q_{I}$, un elemento strutturante (SE), che definisce la connettivit\`a da rispettare, e un'immagine \textit{marker} \textit{F} tale che $Q_{F} \subseteq Q_{I}$, che permette di definire quali componenti connesse devono subire i risultati delle operazioni morfologiche. A questo punto, possiamo definire l'\textit{erosione condizionale} come:
@@ -156,9 +177,17 @@ mentre la \textit{dilatazione geodetica}:
 	\label{eq:geodesic-dilation}
 	[\delta_{Q_{SE}}(F)]^{(i)}_{I}(\textbf{x}) = [\delta_{Q_{SE}}([\delta_{Q_{SE}}(F)]^{(i-1)}_{I}(\textbf{x}))]^{(0)}_{I}(\textbf{x}), i=1,2,3,\dots
 \end{equation}
-Concettualmente, le iterazioni sopra definite potrebbero continuare indefinitamente, ma per ragioni pratiche si sceglie di farle terminare per un intero \textit{n} tale che nessun cambiamento avvenga $\forall n' > n$. L'output stabile $R^{\epsilon}_{I}(Q_{F}))=[\epsilon_{Q_{SE}}(F)]^{(n)}_{I}(\textbf{x})$ e $R^{\delta}_{I}(F))=[\delta_{Q_{SE}}(F)]^{(n)}_{I}(\textbf{x})$ cos\`i definito viene denominato rispettivamente \textit{erosione} e \textit{dilatazione} con \textit{ricostruzione}.
-\par Definiamo adesso le operazioni di \textit{apertura} e \textit{chiusura} con \textit{ricostruzione}:\\
-L'operazione di apertura permette di rimuovere oggetti in base allo SE usato, ma ha il limite di non preservare le altre strutture, che vengono comunque modificate. Questo limite viene completamente superato dall'operatore di \textit{apertura con ricostruzione}, che opera nel seguente modo: l'immagine viene erosa con lo SE come per l'apertura normale, ma invece di far seguire una dilatazione, si opera una ricostruzione usando l'immagine originale come \textit{mask}, e l'immagine erosa come \textit{marker}. L'operazione di \textit{chiusura con ricostruzione} opera in modo analogo. In formule:
+Concettualmente, le iterazioni sopra definite potrebbero continuare indefinitamente, ma per ragioni pratiche si sceglie di farle terminare per un intero \textit{n} tale che nessun cambiamento avvenga $\forall n' > n$. L'output stabile 
+\begin{equation}
+	\label{eq:erosion-reconstruction}
+	R^{\epsilon}_{I}(F)=[\epsilon_{Q_{SE}}(F)]^{(n)}_{I}(\textbf{x}),
+\end{equation}
+\begin{equation}
+	\label{eq:dilation-reconstruction}
+	R^{\delta}_{I}(F)=[\delta_{Q_{SE}}(F)]^{(n)}_{I}(\textbf{x})
+\end{equation}
+cos\`i definito viene denominato rispettivamente \textit{erosione} e \textit{dilatazione} con \textit{ricostruzione}.\par 
+Definiamo adesso le operazioni di \textit{apertura} e \textit{chiusura} con \textit{ricostruzione}: l'operazione di apertura permette di rimuovere oggetti in base allo SE usato, ma ha il limite di non preservare le altre strutture, che vengono comunque modificate. Questo limite viene completamente superato dall'operatore di \textit{apertura con ricostruzione}, che opera nel seguente modo: l'immagine viene erosa con lo SE come per l'apertura normale, ma invece di far seguire una dilatazione, si opera una ricostruzione usando l'immagine originale come \textit{mask}, e l'immagine erosa come \textit{marker}. L'operazione di \textit{chiusura con ricostruzione} opera in modo analogo. In formule:
 \begin{equation}
 	\label{eq:opening-reconstruction}
 	\tilde{\gamma}_{R}(I) = \gamma_{R}^{(n)}(I) = R_{I}^{\delta}[\epsilon^{(n)}(I)],
@@ -170,7 +199,7 @@ L'operazione di apertura permette di rimuovere oggetti in base allo SE usato, ma
 
 \subsection{Altri operatori morfologici}
 \label{subsec:math-morph-others}
-Gli operatori fin'ora descritti permettono di estrarre caratteristiche importanti all'interno delle immagini, ma, ad esempio, consentono difficilmente di effettuare un'equalizzazione di parametri di sfondo, oppure di estrarre piccoli particolari d'interesse, oppure ancora di rilevare i contorni di un oggetto. Per ovviare a queste problematiche, si pu\`o ricorrere all'utilizzo di trasformazioni pi\`u specifiche, derivate da quelle di base. In particolare, possiamo definire l'operatore \textit{top-hat}, nelle due versioni \textit{bianca} e \textit{nera}, rispettivamente:
+Gli operatori fin'ora descritti permettono di estrarre caratteristiche importanti all'interno delle immagini, ma, ad esempio, consentono difficilmente di effettuare un'equalizzazione di parametri dell'immagine, oppure di estrarre piccoli particolari d'interesse, oppure ancora di rilevare i contorni di un oggetto. Per ovviare a queste problematiche, si pu\`o ricorrere all'utilizzo di trasformazioni pi\`u specifiche, derivate da quelle di base. In particolare, possiamo definire l'operatore \textit{top-hat}, nelle due versioni \textit{bianca} e \textit{nera}, rispettivamente:
 \begin{equation}
 	\label{eq:white-top-hat}
 	g_{Q_{SE}}^{w}(I) = I - \gamma_{Q_{SE}}(I),
