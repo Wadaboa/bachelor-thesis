@@ -33,7 +33,7 @@ In figura \ref{fig:mser} un esempio di \textit{text detection} con l'utilizzo de
 			}
 		}
 	}
-	\caption{Text detection con \textit{MSER}} \label{fig:mser}
+	\caption{\textit{Text detection} con \textit{MSER}} \label{fig:mser}
 \end{figure}
 
 
@@ -55,8 +55,136 @@ L'approccio ideale per i problemi di \textit{text detection} sarebbe quello di u
 			}
 		}
 	}
-	\caption{Text detection con \textit{EAST}} \label{fig:east}
+	\caption{\textit{Text detection} con \textit{EAST}} \label{fig:east}
 \end{figure}
 
 
-\section{Algoritmo proposto}
+\section{Ritaglio dinamico dei campi di un documento}
+In questa sezione presentiamo un approccio dinamico per il ritaglio dei campi di un documento d'identit\`a. Prima dell'introduzione di questo metodo, la libreria QI-OCR effettuava un ritaglio statico per ogni campo del documento in analisi, in base a coordinate predeterminate dal \textit{template} del documento e ipotizzando un ritaglio e una centratura quasi perfetta a seguito degli algoritmi di localizzazione descritti nel capitolo \ref{chap:image-matching}. In tabella \ref{tab:car-r-coords} un esempio di coordinate definite per il retro della vecchia carta d'identit\`a italiana, in base a una dimensione di $700 \times 1000$ pixel, con campi e template visibili in figura \ref{fig:car-r-template}.\par
+\begin{figure}[h]
+	\centering
+	\resizebox{.6\textwidth}{!}{
+		\centering
+		\subfloat[Template] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/car-r-template.png}}
+			}
+		}
+		\subfloat[Campi] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/car-r-fields.png}}
+			}
+		}
+	}
+	\caption{Campi vecchia carta d'identit\`a italiana (retro)} \label{fig:car-r-template}
+\end{figure}
+\begin{table}[H]
+	\centering
+	\resizebox{.8\textwidth}{!}{%
+	\begin{tabular}{|c|c|c|c|c|}
+	\hline
+	\textbf{Campo} & \textbf{$x$} & \textbf{$y$} & \textbf{$larghezza$} & \textbf{$altezza$} \\ \hline
+	{\color{blue}Comune} & $100px$ & $430px$ & $500px$ & $100px$ \\ \hline
+	{\color{green}Numero documento} & $160px$ & $620px$ & $470px$ & $80px$ \\ \hline
+	{\color{red}Nome completo} & $100px$ & $780px$ & $480px$ & $160px$ \\ \hline
+	\end{tabular}%
+	}
+	\caption{Coordinate campi vecchia carta d'identit\`a italiana (retro)}
+	\label{tab:car-r-coords}
+\end{table}
+Purtroppo, con il ritaglio statico utilizzato il rischio di perdita d'informazione aumenta quando la localizzazione del documento ritorna un risultato approssimativo, oppure quando si stanno estraendo campi da documenti che non rispettano esattamente i template prefissati, come la vecchia carta d'identit\`a italiana. Per avere un'idea pi\`u concreta della problematica menzionata, in figura \ref{fig:car-f-example} mostriamo un esempio di carta d'identit\`a cartacea che non rispetta gli standard e in figura \ref{fig:car-f-static} i relativi campi ritagliati in modo statico.\par
+\begin{figure}[H]
+	\centering
+	\resizebox{.5\textwidth}{!}{
+		\frame{\includegraphics[]{img/car-f.png}}
+	}
+	\caption{Vecchia carta d'identit\`a italiana (fronte) non standard} \label{fig:car-f-example}
+\end{figure}
+\begin{figure}[h]
+	\centering
+	\resizebox{\textwidth}{!}{
+		\centering
+		\subfloat[Nome] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/car-f-name-static.png}}
+			}
+		}
+		\subfloat[Cognome] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/car-f-surname-static.png}}
+			}
+		}
+		\subfloat[Data di nascita] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/car-f-birthdate-static.png}}
+			}
+		}
+	}
+	\caption{Campi vecchia carta d'identit\`a italiana (fronte) non standard, ritagliati in modo statico} \label{fig:car-f-static}
+\end{figure}
+L'approccio proposto consente di risolvere le problematiche del ritaglio statico, quando lo scostamento delle coordinate reali da quelle predefinite non \`e troppo elevato. L'algoritmo in questione prevede l'individuazione delle regioni di testo in modo dinamico, tramite uno degli algoritmi di \textit{text detection} descritti. Dopodich\`e, per ciascun campo, le informazioni sui \textit{bounding boxes dinamici} vengono utilizzate per calcolare il valore di ordinata effettivo e la lunghezza corretta del campo in esame. Per svolgere questo compito, l'algoritmo computa l'intersezione del rettangolo statico con tutti i rettangoli dinamici e calcola l'area di intersezione massima. Le coordinate del \textit{bounding box dinamico} che ha dato l'intersezione di area massima vengono utilizzate per determinare i nuovi valori di $y$ e $lunghezza$ del campo analizzato. Lo pseudocodice della procedura descritta \`e definito nell'algoritmo \ref{alg:dynamic-cut}, mentre l'immagine \ref{fig:car-f-dynamic} mostra i risultati ottenuti nell'esempio riportato in figura \ref{fig:car-f-example}, grazie all'utilizzo della rete \textit{EAST} (vedi figura \ref{fig:car-f-example-east}).
+\begin{figure}[H]
+	\centering
+	\resizebox{.5\textwidth}{!}{
+		\frame{\includegraphics[]{img/car-f-east.png}}
+	}
+	\caption{Output di \textit{EAST} su una vecchia carta d'identit\`a italiana (fronte) non standard} \label{fig:car-f-example-east}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\resizebox{\textwidth}{!}{
+		\centering
+		\subfloat[Nome] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/car-f-name-dynamic.png}}
+			}
+		}
+		\subfloat[Cognome] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/car-f-surname-dynamic.png}}
+			}
+		}
+		\subfloat[Data di nascita] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/car-f-birthdate-dynamic.png}}
+			}
+		}
+	}
+	\caption{Campi vecchia carta d'identit\`a italiana (fronte) non standard, ritagliati in modo dinamico} \label{fig:car-f-dynamic}
+\end{figure}
+
+\begin{algorithm}[H]
+	\caption{Ritaglio dinamico}
+	\label{alg:dynamic-cut}
+	
+	\begin{algorithmic}[1]
+		\Function{dynamic-cut}{}
+			\State $\vars{image} \gets \text{input image}$
+			\State $\vars{field} \gets \text{rectangle} (\vars{x}, \vars{y}, \vars{width}, \vars{height})$
+			\State $\vars{dynamic-fields} \gets \text{list of rectangles} (\vars{x}, \vars{y}, \vars{width}, \vars{height})$
+			\\
+			\State $\vars{max-bbox} \gets \textproc{max-intersection-area-bbox(\vars{field}, \vars{dynamic-fields})}$
+			\State $\vars{field.y} \gets \vars{max-bbox.y}$
+			\State $\vars{field.width} \gets \textproc{max(\vars{field.width, max-bbox.width})}$
+
+			\Return $\vars{image[field.y:field.y + field.height]}$\newline\hspace*{2.91cm}
+					$\vars{[field.x:field.x + field.width]}$
+		\EndFunction
+		\Statex
+		\Function{max-intersection-area-bbox}{}
+			\State $\vars{field} \gets \text{rectangle} (\vars{x}, \vars{y}, \vars{width}, \vars{height})$
+			\State $\vars{dynamic-fields} \gets \text{list of rectangles} (\vars{x}, \vars{y}, \vars{width}, \vars{height})$
+			\\
+			\State $\vars{max-area} \gets 0\text{, } \vars{max-bbox} \gets field$
+			\For {$\vars{dynamic-field} \text{ in \vars{dynamic-fields}}$}
+				\State $\vars{area} \gets \textproc{intersection-area(\vars{field}, \vars{dynamic-field})}$
+				\If {$\vars{area} > \vars{max-area}$}
+					\State $\vars{max-area} \gets \vars{area}$
+					\State $\vars{max-bbox} \gets \vars{dynamic-field}$
+				\EndIf
+			\EndFor
+
+			\Return $\vars{max-bbox}$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}

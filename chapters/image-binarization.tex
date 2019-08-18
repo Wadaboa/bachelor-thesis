@@ -84,7 +84,7 @@ Questo tipo di sogliatura utilizza tecniche di analisi dell'\textit{istogramma}\
 			\end{axis}
 		\end{tikzpicture}
 	}
-	\caption{Esempio di istogramma bimodale} \label{fig:bimodal-hist}
+	\caption{Istogramma bimodale} \label{fig:bimodal-hist}
 \end{figure}
 Nel caso in cui l'immagine in analisi non presenti esattamente due massimi locali nella funzione istogramma, il procedimento di Otsu potrebbe per\`o portare a risultati indesiderati.
 
@@ -175,7 +175,6 @@ Questo tipo di operazione consente di correggere efficacemente condizioni di luc
 A questo punto, il numero di chiamate OCR effettuabili viene fissato a un massimo di $3$ per campo, ovvero una chiamata per ciascun output prodotto dall'algoritmo di sogliatura proposto, riducendo notevolmente il tempo di esecuzione, senza compromettere l'accuratezza.\par
 Per valutare effettivamente i risultati del lavoro prodotto, sono stati effettuati diversi test con campioni casuali di 50 tessere sanitarie fronte, scelte da una distribuzione uniforme.
 \begin{table}[H]
-	\caption{Benchmark senza modifiche (campione 1)}
 	\centering
 	\resizebox{\textwidth}{!}{%
 	\begin{tabular}{|c|c|c|}
@@ -186,9 +185,9 @@ Per valutare effettivamente i risultati del lavoro prodotto, sono stati effettua
 	168/300 & 73\% & $820s \approx 13.66m$ \\ \hline
 	\end{tabular}%
 	}
+	\caption{Benchmark senza modifiche (campione 1)}
 \end{table}
 \begin{table}[H]
-	\caption{Benchmark con modifiche (campione 1)}
 	\centering
 	\resizebox{\textwidth}{!}{%
 	\begin{tabular}{|c|c|c|}
@@ -199,10 +198,10 @@ Per valutare effettivamente i risultati del lavoro prodotto, sono stati effettua
 	182/300 & 75\% & $360s = 6.00m$ \\ \hline
 	\end{tabular}%
 	}
+	\caption{Benchmark con modifiche (campione 1)}
 \end{table}
 Per dare un'idea pi\`u mirata delle migliorie relative ai tempi di esecuzione abbiamo suddiviso i \textit{benchmark} in base alla funzione svolta dalla libreria, ottenendo i seguenti risultati:
 \begin{table}[H]
-	\caption{Benchmark senza modifiche (campione 2)}
 	\centering
 	\resizebox{\textwidth}{!}{%
 	\begin{tabular}{|c|c|c|c|c|}
@@ -215,9 +214,9 @@ Per dare un'idea pi\`u mirata delle migliorie relative ai tempi di esecuzione ab
 	193/264 & 86\% & $331s \approx 5.51m$ & $221s \approx 3.68m$ & $573s \approx 9.55m$ \\ \hline
 	\end{tabular}%
 	}
+	\caption{Benchmark senza modifiche (campione 2)}
 \end{table}
 \begin{table}[H]
-	\caption{Benchmark con modifiche (campione 2)}
 	\centering
 	\resizebox{\textwidth}{!}{%
 	\begin{tabular}{|c|c|c|c|c|}
@@ -230,6 +229,7 @@ Per dare un'idea pi\`u mirata delle migliorie relative ai tempi di esecuzione ab
 	182/264 & 86\% & $89s \approx 1.48m$ & $209s \approx 3.48m$ & $342s \approx 5.7m$ \\ \hline
 	\end{tabular}%
 	}
+	\caption{Benchmark con modifiche (campione 2)}
 \end{table}
 Dunque, possiamo notare che l'accuratezza \`e rimasta la stessa, il tempo totale impiegato \`e effettivamente dimezzato, mentre il tempo necessario a effettuare le operazioni di OCR \`e diminuito di circa 4 volte.\par
 I \textit{benchmark} effettuati sono stati prodotti utilizzando \textit{SIFT} come algoritmo di localizzazione del documento e l'accuratezza media \`e stata valutata utilizzando un algoritmo per il calcolo della similitudine tra due stringhe\footnote{L'algoritmo menzionato \`e quello di \textit{Ratcliff/Obershelp}.}. In particolare, l'accuratezza media \`e data dalla media delle accuratezze di ogni singolo documento processato, dove l'accuratezza di un documento \`e data dalla media delle accuratezze su ogni singolo campo e l'accuratezza su un campo \`e la misura della distanza della stringa prodotta dal motore OCR e la stringa effettiva, derivata da osservazioni dirette (\textit{ground-truth}).
