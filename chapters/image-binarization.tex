@@ -4,9 +4,15 @@
 
 \section{Introduzione}
 \label{sec:image-bin-intro}
-Nel campo dell'\textit{image processing} ricopre un ruolo fondamentale la possibilit\`a di distinguere diversi oggetti, forme e contorni presenti nell'immagine in analisi. Per far ci\`o \`e possibile ricorrere a svariate metodologie, che sono strettamente dipendenti dal contesto in cui si intende operare. Per esempio, nel caso del \textit{riconoscimento ottico dei caratteri} (\textit{OCR}), le operazioni che andranno descritte assumono importanza assoluta, dato che questo tipo di applicazione, per operare al meglio, ha spesso bisogno di ricevere in input un'immagine in bianco e nero, in cui lo sfondo \`e di colore bianco e il testo \`e di colore nero. Gli argomenti affrontati, nel caso di un'applicazione \textit{OCR}, saranno soprattutto utili nel caso in cui il motore utilizzato sia \textit{open-source} (vedi \textit{Tesseract}), ovvero nel caso in cui un buon \textit{pre-processing} dell'immagine possa fare la differenza. In questo capitolo andremo quindi ad analizzare gli \textit{algoritmi} pi\`u ricorrenti nell'ambito del \textit{thresholding} di immagini e nella sezione \ref{sec:image-bin-proposed-approach} affronteremo un approccio specificamente studiato per i casi d'uso della libreria QI-OCR.
-
-Da qui in avanti ipotizzeremo di lavorare con immagini originali in \textit{scala di grigi} con profondit\`a 8 bit, anche se i metodi descritti possono facilmente essere generalizzati per immagini con pi\`u di un canale colore.
+Nel campo dell'\textit{image processing} ricopre un ruolo fondamentale la possibilit\`a di distinguere diversi oggetti, forme e contorni presenti nell'immagine in analisi. Per far ci\`o \`e possibile ricorrere a svariate metodologie, che sono strettamente dipendenti dal contesto in cui si intende operare. Per esempio, nel caso del \textit{riconoscimento ottico dei caratteri} (\textit{OCR}), le operazioni che andranno descritte assumono importanza assoluta, dato che questo tipo di applicazione, per operare al meglio, ha spesso bisogno di ricevere in input un'immagine in bianco e nero, in cui lo sfondo \`e di colore bianco e il testo \`e di colore nero. Gli argomenti affrontati, nel caso di un'applicazione \textit{OCR}, saranno soprattutto utili nel caso in cui il motore utilizzato sia \textit{open-source} (vedi \textit{Tesseract}), ovvero nel caso in cui un buon \textit{pre-processing} dell'immagine possa fare la differenza. In questo capitolo andremo quindi ad analizzare gli \textit{algoritmi} pi\`u ricorrenti nell'ambito del \textit{thresholding} di immagini e nella sezione \ref{sec:image-bin-proposed-approach} affronteremo un approccio specificamente studiato per i casi d'uso della libreria QI-OCR.\par
+Da qui in avanti ipotizzeremo di lavorare con immagini originali in \textit{scala di grigi} con profondit\`a 8 bit, anche se i metodi descritti possono facilmente essere generalizzati per immagini con pi\`u di un canale colore.\par
+Consideriamo l'immagine \ref{fig:image-bin-input} come esempio per l'analisi delle operazioni che andremo a descrivere.
+\begin{figure}[h]
+	\centering
+	\frame{\includegraphics[width=\linewidth]{img/image-bin-input.png}}
+	\caption{Input per le operazioni di sogliatura}
+	\label{fig:image-bin-input}
+\end{figure}
 
 
 \section{Sogliatura globale}
@@ -35,7 +41,12 @@ Nel caso in cui il contesto in cui si opera sia relativamente statico, la \texti
 		\EndFunction
 	\end{algorithmic}
 \end{algorithm}
-
+\begin{figure}[H]
+	\centering
+	\frame{\includegraphics[width=\linewidth]{img/global-thresh.png}}
+	\caption{Output sogliatura globale con $\vars{thresh}=20$}
+	\label{fig:image-bin-global}
+\end{figure}
 
 \section{Sogliatura adattativa (o locale)}
 \label{sec:image-bin-local}
@@ -68,7 +79,12 @@ Purtroppo, il problema principale della sogliatura adattativa \`e che tende a va
 		\EndFunction
 	\end{algorithmic}
 \end{algorithm}
-
+\begin{figure}[H]
+	\centering
+	\frame{\includegraphics[width=\linewidth]{img/local-thresh-gaussian.png}}
+	\caption{Output sogliatura locale \textit{Gaussiana} con $\vars{c}=2$ e $\vars{window}=11\times11$}
+	\label{fig:image-bin-local}
+\end{figure}
 
 \section{Sogliatura di Otsu}
 \label{sec:image-bin-otsu}
@@ -87,21 +103,19 @@ Questo tipo di sogliatura utilizza tecniche di analisi dell'\textit{istogramma}\
 	\caption{Istogramma bimodale} \label{fig:bimodal-hist}
 \end{figure}
 Nel caso in cui l'immagine in analisi non presenti esattamente due massimi locali nella funzione istogramma, il procedimento di \textit{Otsu} potrebbe per\`o portare a risultati indesiderati.
-
+\begin{figure}[H]
+	\centering
+	\frame{\includegraphics[width=\linewidth]{img/otsu-thresh.png}}
+	\caption{Output sogliatura di \textit{Otsu}}
+	\label{fig:image-bin-otsu}
+\end{figure}
 
 \section{Sogliatura proposta}
 \label{sec:image-bin-proposed-approach}
 In questa sezione andiamo a descrivere un algoritmo pensato e implementato per la \textit{segmentazione} di immagini contenenti \textit{testo nero su uno sfondo colorato}, arricchito di decorazioni, simboli e varie grafiche, per ottenere un'immagine correttamente processabile da motori \textit{OCR} (in particolare da quelli \textit{open-source}, come \textit{Tesseract}).\par
 L'approccio precedentemente adottato dalla libreria QI-OCR prevedeva la scelta mirata di diversi livelli di sogliatura per ciascun campo del documento in analisi, effettuando cos\`i una serie di operazioni di sogliatura globale e di conseguenti chiamate al motore OCR, per poi scegliere il risultato migliore a posteriori. Il problema principale di questo metodo riguarda la scarsa efficienza dal punto di vista computazionale, in quanto il tempo di esecuzione per effettuare un'operazione di sogliatura globale e per ricevere l'output dal motore OCR \`e di circa $1s$\footnote{L'elevato tempo di esecuzione \`e dato principalmente dalla chiamata al motore OCR. Per esempio, nel caso di \textit{Tesseract}, in \textit{Python} non esiste una vera e propria API ufficiale ed \`e dunque necessario utilizzare un \textit{wrapper} che effettua chiamate al software di sistema, introducendo \textit{overhead}.}. Considerando che, in alcuni casi, il numero di soglie da applicare a un particolare campo poteva arrivare anche fino a 10, il tempo di esecuzione per la sola operazione di OCR sarebbe stato all'incirca $10s$.\par
 Il percorso che ha portato alla soluzione descritta in seguito \`e passato da due strade fallimentari:
-la prima prevedeva l'analisi delle componenti connesse dell'immagine in input, come descritto in \cite{bib:text-extraction}, mentre la seconda prevedeva l'implementazione di una rete neurale convoluzionale (\textit{CNN - Convolutional Neural Network}), allenata a partire da associazioni \textit{campo} - \textit{soglia} prestabilite. Purtroppo, entrambi i tentativi non hanno ritornato i risultati sperati: nel primo caso per una mancanza di strumenti adatti, mentre nel secondo per la mancanza di una conoscenza approfondita del settore.\par
-Consideriamo l'immagine \ref{fig:image-bin-proposed-approach-input} come esempio per l'analisi delle operazioni che andremo a descrivere.
-\begin{figure}[h]
-	\centering
-	\frame{\includegraphics[width=\linewidth]{img/image-bin-proposed-approach-input.png}}
-	\caption{Input per la sogliatura proposta}
-	\label{fig:image-bin-proposed-approach-input}
-\end{figure}
+la prima prevedeva l'analisi delle componenti connesse dell'immagine in input, come descritto in \cite{bib:text-extraction}, mentre la seconda prevedeva l'implementazione di una rete neurale convoluzionale (\textit{CNN - Convolutional Neural Network}), allenata a partire da associazioni \textit{campo} - \textit{soglia} prestabilite. Purtroppo, entrambi i tentativi non hanno ritornato i risultati sperati: nel primo caso per una mancanza di strumenti adatti, mentre nel secondo per la mancanza di una conoscenza approfondita del settore.
 
 \subsection{Trasformazione comune}
 \label{subsec:image-bin-proposed-approach-common}
