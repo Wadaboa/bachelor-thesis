@@ -186,5 +186,21 @@ L'approccio proposto consente di risolvere le problematiche del ritaglio statico
 
 			\Return $\vars{max-bbox}$
 		\EndFunction
+		\Statex
+		\Function{intersection-area}{}
+			\State $\vars{rect-one} \gets \text{rectangle} (\vars{x}, \vars{y}, \vars{width}, \vars{height})$
+			\State $\vars{rect-two} \gets \text{rectangle} (\vars{x}, \vars{y}, \vars{width}, \vars{height})$
+			\\
+			\State $\vars{dx} \gets 0\text{, } \vars{dy} \gets 0$
+			
+			\State $\vars{dx} = \textproc{min}(\vars{rect-one.x} + \vars{rect-one.width},$\newline\hspace*{0.6cm}$\vars{rect-two.x} + \vars{rect-two.width}) - \textproc{max}(\vars{rect-one.x}, \vars{rect-two.x})$
+			\State $\vars{dy} = \textproc{min}(\vars{rect-one.y} + \vars{rect-one.height},$\newline\hspace*{0.6cm}$\vars{rect-two.y} + \vars{rect-two.height}) - \textproc{max}(\vars{rect-one.y}, \vars{rect-two.y})$
+
+			\If {$\vars{dx} > 0 \wedge \vars{dy} > 0$}
+				\Return $\vars{dx} \cdot \vars{dy}$
+			\EndIf
+
+			\Return $0$
+		\EndFunction
 	\end{algorithmic}
 \end{algorithm}
