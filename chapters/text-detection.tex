@@ -63,18 +63,17 @@ L'approccio ideale per i problemi di \textit{text detection} sarebbe quello di u
 In questa sezione presentiamo un approccio dinamico per il ritaglio dei campi di un documento d'identit\`a. Prima dell'introduzione di questo metodo, la libreria QI-OCR effettuava un ritaglio statico per ogni campo del documento in analisi, in base a coordinate predeterminate dal \textit{template} del documento e ipotizzando un ritaglio e una centratura quasi perfetta a seguito degli algoritmi di localizzazione descritti nel capitolo \ref{chap:image-matching}. In tabella \ref{tab:car-r-coords} un esempio di coordinate definite per il retro della vecchia carta d'identit\`a italiana, in base a una dimensione di $700 \times 1000$ pixel, con campi e template visibili in figura \ref{fig:car-r-template}.\par
 \begin{figure}[h]
 	\centering
-	\resizebox{.6\textwidth}{!}{
+	\resizebox{.4\textwidth}{!}{
 		\centering
-		\subfloat[Template] {%
-			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/car-r-template.png}}
-			}
-		}
-		\subfloat[Campi] {%
+		\begin{tikzpicture}
+			\draw[->,ultra thick] (0,5)--(3.6,5) node[right]{$x$};
+			\draw[->,ultra thick] (0,5)--(0,0) node[below]{$y$};
+			
+			\hspace*{0.2cm}
 			\scalebox{0.5}[0.5] {
 				\frame{\includegraphics[width=.5\linewidth]{img/car-r-fields.png}}
 			}
-		}
+		\end{tikzpicture}
 	}
 	\caption{Campi vecchia carta d'identit\`a italiana (retro)} \label{fig:car-r-template}
 \end{figure}
@@ -95,7 +94,7 @@ In questa sezione presentiamo un approccio dinamico per il ritaglio dei campi di
 Purtroppo, con il ritaglio statico utilizzato il rischio di perdita d'informazione aumenta quando la localizzazione del documento ritorna un risultato approssimativo, oppure quando si stanno estraendo campi da documenti che non rispettano esattamente i template prefissati, come la vecchia carta d'identit\`a italiana. Per avere un'idea pi\`u concreta della problematica menzionata, in figura \ref{fig:car-f-example} mostriamo un esempio di carta d'identit\`a cartacea che non rispetta gli standard e in figura \ref{fig:car-f-static} i relativi campi ritagliati in modo statico.\par
 \begin{figure}[H]
 	\centering
-	\resizebox{.5\textwidth}{!}{
+	\resizebox{.6\textwidth}{!}{
 		\frame{\includegraphics[]{img/car-f.png}}
 	}
 	\caption{Vecchia carta d'identit\`a italiana (fronte) non standard} \label{fig:car-f-example}
@@ -125,7 +124,7 @@ Purtroppo, con il ritaglio statico utilizzato il rischio di perdita d'informazio
 L'approccio proposto consente di risolvere le problematiche del ritaglio statico, quando lo scostamento delle coordinate reali da quelle predefinite non \`e troppo elevato. L'algoritmo in questione prevede l'individuazione delle regioni di testo in modo dinamico, tramite uno degli algoritmi di \textit{text detection} descritti. Dopodich\`e, per ciascun campo, le informazioni sui \textit{bounding boxes dinamici} vengono utilizzate per calcolare il valore di ordinata effettivo e la lunghezza corretta del campo in esame. Per svolgere questo compito, l'algoritmo computa l'intersezione del rettangolo statico con tutti i rettangoli dinamici e calcola l'area di intersezione massima. Le coordinate del \textit{bounding box dinamico} che ha dato l'intersezione di area massima vengono utilizzate per determinare i nuovi valori di $y$ e $lunghezza$ del campo analizzato. Lo pseudocodice della procedura descritta \`e definito nell'algoritmo \ref{alg:dynamic-cut}, mentre l'immagine \ref{fig:car-f-dynamic} mostra i risultati ottenuti nell'esempio riportato in figura \ref{fig:car-f-example}, grazie all'utilizzo della rete \textit{EAST} (vedi figura \ref{fig:car-f-example-east}).
 \begin{figure}[H]
 	\centering
-	\resizebox{.5\textwidth}{!}{
+	\resizebox{.6\textwidth}{!}{
 		\frame{\includegraphics[]{img/car-f-east.png}}
 	}
 	\caption{Output di \textit{EAST} su una vecchia carta d'identit\`a italiana (fronte) non standard} \label{fig:car-f-example-east}
