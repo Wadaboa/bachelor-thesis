@@ -111,6 +111,7 @@ Dato che il gradiente \`e un vettore, questo avr\`a modulo e direzione\footnote{
 \end{equation}\par
 Per computare il gradiente di un'immagine, nella pratica viene effettuata una convoluzione con dei particolari filtri. Per esempio, utilizzando il filtro di \textit{Sobel-Feldman}:\\
 \vspace*{15pt}
+\hspace*{-8pt}
 \noindent\begin{minipage}{.5\linewidth}
 	\begin{equation}
 		I_{x} = I * 
@@ -122,6 +123,7 @@ Per computare il gradiente di un'immagine, nella pratica viene effettuata una co
 		\label{eq:sobel-x}
 	\end{equation}
 \end{minipage}%
+\hspace*{-10pt}
 \begin{minipage}{.5\linewidth}
 	\begin{equation}
 		I_{y} = I * 
@@ -227,5 +229,22 @@ Inizialmente, la libreria QI-OCR prevedeva il solo utilizzo dell'algoritmo \text
 Adesso, l'esecuzione della libreria prevede dunque l'utilizzo congiunto degli algoritmi \textit{SIFT}, \textit{SURF}, \textit{AKAZE} e \textit{BRISK} e della rete \textit{HED}, tramite l'impiego di diversi \textit{thread}. Non appena uno dei thread eseguiti torna il risultato prodotto al \textit{processo padre}, l'esecuzione degli altri thread viene interrotta.\par
 L'algoritmo che ha restituito i migliori risultati \`e \textit{AKAZE}, che mantiene all'incirca l'accuratezza di \textit{SIFT}, dimezzando i tempi di esecuzione. L'algoritmo che invece ha restituito i peggiori risultati \`e \textit{ORB}, implementato in fase preliminare e scartato successivamente. Per quanto riguarda \textit{HED} invece, una realizzazione stabile \`e ancora in fase di lavorazione.\par
 Infine, per consentire la produzione di \textit{test massivi} e valutare l'accuratezza e la velocit\`a ottenibile con ciascuno degli algoritmi implementati, la libreria risulta configurabile in base al tipo di localizzazione che si intende effettuare. I risultati riportati sono frutto dell'elaborazione da parte della libreria di un insieme di circa 400 documenti d'identit\`a: 
-
-INSERIRE TABELLA RISULTATI (TEMPO +  ACCURATEZZA)
+\begin{table}[H]
+	\centering
+	\resizebox{\textwidth}{!}{%
+	\begin{tabular}{|c|c|c|}
+	\hline
+	\textbf{Feature matcher} & \textbf{Tempo medio di esecuzione} & \textbf{Accuratezza media} \\ \hline
+	\textit{AKAZE} & $5.41s$ & $27.24\%$ \\ \hline
+	\textit{SIFT} & $6.94s$ & $22.67\%$ \\ \hline
+	\textit{SURF} & $8.68s$ & $34.06\%$ \\ \hline
+	\textit{BRISK} & $5.21s$ & $26.17\%$ \\ \hline
+	\textit{All} & $24.63s$ & $77.49\%$ \\ \hline
+	\end{tabular}%
+	}
+	\caption{Analisi comparativa algoritmi di \textit{feature matching}}
+	\label{tab:feature-matching-comparison}
+\end{table}
+Come si pu\`o notare dai risultati in tabella \ref{tab:feature-matching-comparison}, \textit{SURF} risulta essere il miglior \textit{feature matcher} in termini di accuratezza, mentre \textit{BRISK} \`e quello che performa meglio dal punto di vista temporale. Come gi\`a anticipato, in casi d'uso reali \textit{AKAZE} restituisce il miglior rapporto qualit\`a/tempo di esecuzione.\par
+L'utilizzo congiunto dei vari \textit{feature matcher} \`e descritto dalla parola chiave \textit{All}: possiamo osservare come l'accuratezza incrementi notevolmente, con un ovvio decremento dell'efficienza della libreria.\par
+\`E tutt'ora in fase di sviluppo una soluzione che permetta di ottenere dei buoni risultati in tempi ragionevoli. Questa soluzione dovr\`a prevedere una particolare condizione che suggerisca l'algoritmo di \textit{image matching} pi\`u consono da utilizzare, per ogni esecuzione.

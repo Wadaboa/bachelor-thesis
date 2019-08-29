@@ -60,7 +60,8 @@ L'approccio ideale per i problemi di \textit{text detection} sarebbe quello di u
 
 
 \section{Ritaglio dinamico dei campi di un documento}
-In questa sezione presentiamo un approccio dinamico per il ritaglio dei campi di un documento d'identit\`a. Prima dell'introduzione di questo metodo, la libreria QI-OCR effettuava un ritaglio statico per ogni campo del documento in analisi, in base a coordinate predeterminate dal \textit{template} del documento e ipotizzando un ritaglio e una centratura quasi perfetta a seguito degli algoritmi di localizzazione descritti nel capitolo \ref{chap:image-matching}. In tabella \ref{tab:car-r-coords} un esempio di coordinate definite per il retro della vecchia carta d'identit\`a italiana, in base a una dimensione di $700 \times 1000$ pixel, con campi e template visibili in figura \ref{fig:car-r-template}.\par
+In questa sezione presentiamo un approccio dinamico per il ritaglio dei campi di un documento d'identit\`a. Prima dell'introduzione di questo metodo, la libreria QI-OCR effettuava un ritaglio statico per ogni campo del documento in analisi, in base a coordinate predeterminate dal \textit{template} del documento e ipotizzando un ritaglio e una centratura quasi perfetta a seguito degli algoritmi di localizzazione descritti nel capitolo \ref{chap:image-matching}.\par
+In tabella \ref{tab:car-r-coords} un esempio di coordinate definite per il retro della vecchia carta d'identit\`a italiana, in base a una dimensione di $700 \times 1000$ pixel, con campi e template visibili in figura \ref{fig:car-r-template}.\par
 \begin{figure}[h]
 	\centering
 	\resizebox{.4\textwidth}{!}{
