@@ -88,7 +88,7 @@ Alcuni esempi di filtri classici:
 In figura \ref{fig:gauss-filter} \`e possibile osservare un esempio di sfocatura di un'immagine, tramite l'applicazione di un filtro di \textit{Gauss}.
 \begin{figure}[H]
 	\centering
-	\resizebox{0.9\textwidth}{!}{
+	\resizebox{.7\textwidth}{!}{
 		\centering
 		\subfloat[Input] {%
 			\scalebox{0.5}[0.5] {
@@ -228,8 +228,8 @@ cos\`i definito viene denominato rispettivamente \textit{erosione} e \textit{dil
 	}
 	\caption[\textit{Dilatazione} con \textit{ricostruzione}]{\textit{Dilatazione} con \textit{ricostruzione}\protect\footnotemark} \label{fig:dilation-reconstruction}
 \end{figure}
-\footnotetext{Fonte: \emph{Advanced morphological image processing} \cite{bib:advanced-morphological}}
-Definiamo adesso le operazioni di \textit{apertura} e \textit{chiusura} con \textit{ricostruzione}: l'operazione di apertura permette di rimuovere oggetti in base allo SE usato, ma ha il limite di non preservare le altre strutture, che vengono comunque modificate. Questo limite viene completamente superato dall'operatore di \textit{apertura con ricostruzione}, che opera nel seguente modo: l'immagine viene erosa con lo SE come per l'apertura normale, ma invece di far seguire una dilatazione, si opera una ricostruzione usando l'immagine originale come \textit{mask}, e l'immagine erosa come \textit{marker}. L'operazione di \textit{chiusura con ricostruzione} opera in modo analogo. In formule:
+\footnotetext{\textit{Fonte}: \emph{Advanced morphological image processing} \cite{bib:advanced-morphological}}
+Definiamo adesso le operazioni di \textit{apertura} e \textit{chiusura} con \textit{ricostruzione}: l'operazione di apertura permette di rimuovere oggetti in base allo SE usato, ma ha il limite di non preservare le altre strutture, che potrebbero comunque venir modificate. Questo limite viene completamente superato dall'operatore di \textit{apertura} con \textit{ricostruzione}, che opera nel seguente modo: l'immagine viene erosa con lo SE come per l'apertura normale, ma invece di far seguire una dilatazione, si opera una ricostruzione usando l'immagine originale come \textit{mask}, e l'immagine erosa come \textit{marker}. L'operazione di \textit{chiusura} con \textit{ricostruzione} opera in modo analogo. In formule:
 \begin{equation}
 	\label{eq:opening-reconstruction}
 	\tilde{\gamma}_{R}(I) = \gamma_{R}^{(n)}(I) = R_{I}^{\delta}[\epsilon^{(n)}(I)],
@@ -261,7 +261,7 @@ In figura \ref{fig:opening-reconstruction} \`e possibile osservare un confronto 
 	}
 	\caption[\textit{Apertura} con \textit{ricostruzione}]{\textit{Apertura} con \textit{ricostruzione}\protect\footnotemark} \label{fig:opening-reconstruction}
 \end{figure}
-\footnotetext{Fonte: \emph{Advanced morphological image processing} \cite{bib:advanced-morphological}}
+\footnotetext{\textit{Fonte}: \emph{Advanced morphological image processing} \cite{bib:advanced-morphological}}
 
 \subsection{Altri operatori morfologici}
 \label{subsec:math-morph-others}
@@ -275,4 +275,22 @@ Gli operatori fin'ora descritti permettono di estrarre caratteristiche important
 	g_{Q_{SE}}^{b}(I) = \phi_{Q_{SE}}(I) - I
 \end{equation}
 Entrambi ritornano un'immagine contenente gli elementi dell'immagine originale che sono pi\`u piccoli dello SE. Il primo ritorna inoltre solo gli elementi pi\`u \textit{luminosi} degli oggetti a loro vicini, mentre il secondo solo gli elementi pi\`u \textit{scuri} degli oggetti a loro vicini. Questo ci fa capire che un buon utilizzo per questo operatore riguarda la correzione di condizioni di luce non uniforme all'interno di un'immagine, per consentire una separazione tra \textit{foreground} e \textit{background} pi\`u marcata, grazie al conseguente incremento di contrasto.
-\par Altri operatori morfologici sono quello \textit{hit-or-miss}, che consente di estrarre pixel i cui vicini hanno una specifica configurazione (\textit{pattern}), in base allo SE utilizzato; oppure quello del \textit{gradiente}, che consiste nella differenza tra dilatazione e erosione di un'immagine, e restituisce, ad esempio, i contorni di oggetti.
+\par Altri operatori morfologici sono quello \textit{hit-or-miss}, che consente di estrarre pixel i cui vicini hanno una specifica configurazione (\textit{pattern}), in base allo SE utilizzato; oppure quello del \textit{gradiente}, che consiste nella differenza tra dilatazione e erosione di un'immagine, e restituisce, ad esempio, i contorni di oggetti (vedi figura \ref{fig:morph-gradient}).
+\begin{figure}[H]
+	\centering
+	\resizebox{.7\textwidth}{!}{
+		\centering
+		\subfloat[Input] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/gradient-input.png}}
+			}
+		}
+		\subfloat[Output] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/gradient-output.png}}
+			}
+		}
+	}
+	\caption[\textit{Gradiente} morfologico]{\textit{Gradiente} morfologico\protect\footnotemark} \label{fig:morph-gradient}
+\end{figure}
+\footnotetext{\textit{Fonte}: \emph{OpenCV documentation} \cite{bib:opencv}}

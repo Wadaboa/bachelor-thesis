@@ -93,7 +93,7 @@ In figura \ref{fig:image-bin-local} \`e possibile osservare un esempio di soglia
 \label{sec:image-bin-otsu}
 Questo tipo di sogliatura utilizza tecniche di analisi dell'\textit{istogramma}\footnote{L'\textit{istogramma} $h$ di un'immagine $I$ in scala di grigi, con valori d'intensit\`a $\in [0, K - 1]$ e definiti nell'immagine della funzione $I$,  \`e una funzione tale che $h(i)$ \`e uguale al numero di pixel di $I$ con valore di intensit\`a $i$, per $0 \leq i < K$. Pi\`u formalmente $h(i)=|{(u, v)\colon I(u, v)=i}|$.} dell'immagine ed \`e particolarmente adatto per immagini \textit{bimodali} (vedi figura \ref{fig:bimodal-hist}), ovvero per immagini che presentano istogrammi con una netta separazione tra due picchi principali. La binarizzazione di \textit{Otsu} si occupa esattamente di trovare la "valle" di scissione fra tali picchi, che risulta essere proprio il valore di soglia ottimale per l'applicazione di un'operazione di sogliatura globale.\par
 \pgfplotsset{compat=1.16,width=13cm,height=7cm}
-\begin{figure}[t]
+\begin{figure}[H]
 	\centering
 	\resizebox{13cm}{7cm}{%
 		\begin{tikzpicture}[font=\sffamily]

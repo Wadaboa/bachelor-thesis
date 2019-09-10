@@ -19,17 +19,17 @@ In figura \ref{fig:mser} un esempio di \textit{text detection} con l'utilizzo de
 		\centering
 		\subfloat[Input] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/mser-east-input.png}}
+				\frame{\includegraphics[width=.8\linewidth]{img/mser-east-input.png}}
 			}
 		}
 		\subfloat[Output] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/mser-regions.png}}
+				\frame{\includegraphics[width=.8\linewidth]{img/mser-regions.png}}
 			}
 		}
 		\subfloat[Output filtrato] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/mser-regions-filtered.png}}
+				\frame{\includegraphics[width=.8\linewidth]{img/mser-regions-filtered.png}}
 			}
 		}
 	}
@@ -42,16 +42,16 @@ L'approccio ideale per i problemi di \textit{text detection} sarebbe quello di u
 \textit{EAST} (\textit{Efficient and Accurate Scene Text detector}) \cite{bib:east} cerca di superare i limiti di \textit{blob detector} come \textit{MSER}, tramite l'implementazione di una rete neurale convoluzionale (\textit{FCN - Fully Convolutional Network}). Le specifiche di questa soluzione non rientrano negli obiettivi di questa tesi, ma nelle figure \ref{fig:mser} e \ref{fig:east} presentiamo un esempio di immagine processata sia da \textit{MSER} che dalla rete \textit{EAST}, per poter confrontare i risultati ottenuti.
 \begin{figure}[h]
 	\centering
-	\resizebox{\textwidth}{!}{
+	\resizebox{.9\textwidth}{!}{
 		\centering
 		\subfloat[Input] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.8\linewidth]{img/mser-east-input.png}}
+				\frame{\includegraphics[width=\linewidth]{img/mser-east-input.png}}
 			}
 		}
 		\subfloat[Output] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.79\linewidth]{img/east-output.png}}
+				\frame{\includegraphics[width=\linewidth]{img/east-output.png}}
 			}
 		}
 	}

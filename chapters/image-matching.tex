@@ -119,7 +119,7 @@ In figura \ref{fig:keypoints} alcuni esempi di \textit{keypoints} ricavati da un
 	}
 	\caption[Rappresentazione di alcune tipologie di \textit{keypoints}]{Rappresentazione di alcune tipologie di \textit{keypoints}\protect\footnotemark} \label{fig:keypoints}
 \end{figure}
-\footnotetext{Fonte: \emph{A Comparative Analysis of SIFT, SURF, KAZE, AKAZE, ORB, and BRISK} \cite{bib:feature-matching-comparison}}
+\footnotetext{\textit{Fonte}: \emph{A Comparative Analysis of SIFT, SURF, KAZE, AKAZE, ORB, and BRISK} \cite{bib:feature-matching-comparison}}
 
 \section{Shape detection}
 \label{sec:shape-detection}
@@ -203,21 +203,21 @@ oppure quello di \textit{Prewitt} \cite{bib:prewitt}:\\
 \end{minipage}
 \begin{figure}[h]
 	\centering
-	\resizebox{\textwidth}{!}{
+	\resizebox{.9\textwidth}{!}{
 		\centering
 		\subfloat[Input] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/mser-east-input.png}}
+				\frame{\includegraphics[width=.8\linewidth]{img/mser-east-input.png}}
 			}
 		}
 		\subfloat[\textit{Sobel} direzione $x$] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/sobel-x.png}}
+				\frame{\includegraphics[width=.8\linewidth]{img/sobel-x.png}}
 			}
 		}
 		\subfloat[\textit{Sobel} direzione $y$] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/sobel-y.png}}
+				\frame{\includegraphics[width=.8\linewidth]{img/sobel-y.png}}
 			}
 		}
 	}
@@ -266,21 +266,21 @@ L'approccio ideale per i problemi di \textit{edge detection} sarebbe quello di u
 \textit{HED} (\textit{Holistically-nested Edge Detection}) \cite{bib:hed} cerca di superare i limiti dell'operatore \textit{Canny}, tramite l'implementazione di una rete neurale convoluzionale (\textit{FCN - Fully Convolutional Network}). Le specifiche di questa soluzione non rientrano negli obiettivi di questa tesi, ma nelle figure \ref{fig:canny} e \ref{fig:hed} presentiamo un esempio di immagine processata sia dall'operatore \textit{Canny} che dalla rete \textit{HED}, per poter confrontare i risultati ottenuti.
 \begin{figure}[h]
 	\centering
-	\resizebox{\textwidth}{!}{
+	\resizebox{.9\textwidth}{!}{
 		\centering
 		\subfloat[Input] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/canny-hed-input.png}}
+				\frame{\includegraphics[width=.8\linewidth]{img/canny-hed-input.png}}
 			}
 		}
 		\subfloat[Output] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/hed-output.png}}
+				\frame{\includegraphics[width=.8\linewidth]{img/hed-output.png}}
 			}
 		}
-		\subfloat[][Output con \textit{dilatazione}] {%
+		\subfloat[Output con \textit{dilatazione}] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/hed-output-dilated.png}}
+				\frame{\includegraphics[width=.8\linewidth]{img/hed-output-dilated.png}}
 			}
 		}
 	}
@@ -290,7 +290,7 @@ L'approccio ideale per i problemi di \textit{edge detection} sarebbe quello di u
 \section{Analisi comparativa}
 \label{sec:image-matching-comparison}
 Inizialmente, la libreria QI-OCR prevedeva il solo utilizzo dell'algoritmo \textit{SIFT} per la localizzazione del documento. A seguito di uno studio comparativo fra gli algoritmi di \textit{image matching} sopra descritti, \`e stato deciso di scartare algoritmi di \textit{template matching}, per favorire quelli di \textit{feature matching} e \textit{shape detection}. In particolare, i primi vengono utilizzati perch\`e invarianti per trasformazioni fotometriche e per tutte le trasformazioni geometriche menzionate, ad eccezione di quelle prospettiche; mentre i secondi vengono utilizzati perch\`e computazionalmente efficienti e possibilmente invarianti anche per trasformazioni prospettiche, anche se non molto resistenti a cambi di illuminazione e/o contrasto dell'immagine.\par
-Adesso, l'esecuzione della libreria prevede dunque l'utilizzo congiunto degli algoritmi \textit{SIFT}, \textit{SURF}, \textit{AKAZE} e \textit{BRISK} e della rete \textit{HED}, tramite l'impiego di diversi \textit{thread}. Non appena uno dei thread eseguiti torna il risultato prodotto al \textit{processo padre}, l'esecuzione degli altri thread viene interrotta.\par
+Adesso, l'esecuzione della libreria prevede dunque l'utilizzo congiunto degli algoritmi \textit{SIFT}, \textit{SURF}, \textit{AKAZE} e \textit{BRISK} e della rete \textit{HED}, tramite l'impiego di diversi \textit{thread}. Non appena uno dei thread eseguiti restituisce il risultato prodotto al \textit{processo padre}, l'esecuzione degli altri thread viene interrotta.\par
 L'algoritmo che ha restituito i migliori risultati \`e \textit{AKAZE}, che mantiene all'incirca l'accuratezza di \textit{SIFT}, riducendo i tempi di esecuzione. L'algoritmo che invece ha restituito i peggiori risultati \`e \textit{ORB}, implementato in fase preliminare e scartato successivamente. Per quanto riguarda \textit{HED} invece, una realizzazione stabile \`e ancora in fase di lavorazione.\par
 Infine, per consentire la produzione di \textit{test massivi} e valutare l'accuratezza e la velocit\`a ottenibile con ciascuno degli algoritmi implementati, la libreria risulta configurabile in base al tipo di localizzazione che si intende effettuare. I risultati riportati sono frutto dell'elaborazione da parte della libreria di un insieme di circa 400 documenti d'identit\`a: 
 \begin{table}[H]
