@@ -84,7 +84,25 @@ Alcuni esempi di filtri classici:
 		-1 & 8 & -1\\
 		-1 & -1 & -1
 	\end{pmatrix}$
-\end{itemize}
+\end{itemize}\par
+In figura \ref{fig:gauss-filter} \`e possibile osservare un esempio di sfocatura di un'immagine, tramite l'applicazione di un filtro di \textit{Gauss}.
+\begin{figure}[H]
+	\centering
+	\resizebox{\textwidth}{!}{
+		\centering
+		\subfloat[Input] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/lena.png}}
+			}
+		}
+		\subfloat[Output] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/lena-blurred.png}}
+			}
+		}
+	}
+	\caption{Applicazione di un filtro di \textit{Gauss} di dimensione $10\times10$} \label{fig:gauss-filter}
+\end{figure}
 
 
 \section{Elementi di morfologia}

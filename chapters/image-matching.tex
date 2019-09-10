@@ -49,7 +49,7 @@ Le sezioni seguenti descrivono vari metodi testati nella libreria QI-OCR per la 
 
 \section{Template matching}
 \label{sec:template-matching}
-L'approccio pi\`u semplice al quale si pu\`o pensare, molto simile a quello utilizzato nella \textit{convoluzione}, riguarda lo scorrimento dell'immagine \textit{template} sull'immagine di input, per confrontare il template e l'area dell'immagine originale coperta dal template stesso. L'output di questa operazione \`e ancora un'immagine, in scala di grigi, in cui ogni pixel denota il grado di similitudine dei suoi "vicini" con il template. La scelta dell'area intorno al pixel di intensit\`a massima, nell'immagine prodotta, dar\`a cos\`i il risultato cercato.\par
+L'approccio pi\`u semplice al quale si pu\`o pensare, molto simile a quello utilizzato nella \textit{convoluzione}, riguarda lo scorrimento dell'immagine \textit{template} sull'immagine di input, per confrontare il template e l'area dell'immagine originale coperta dal template stesso (vedi figura \ref{fig:template-matching}). L'output di questa operazione \`e ancora un'immagine, in scala di grigi, in cui ogni pixel denota il grado di similitudine dei suoi "vicini" con il template. La scelta dell'area intorno al pixel di intensit\`a massima, nell'immagine prodotta, dar\`a cos\`i il risultato cercato.\par
 Il punto cruciale di questa tecnica sta nel metodo di confronto fra pixel scelto, che potrebbe essere, ad esempio, la misura di \textit{distanza euclidea}. Consideriamo $d_{E}(r, s)$ come la distanza euclidea tra l'immagine template $T$ e l'immagine in input $I$, nella posizione $(r, s)$:
 \begin{equation}
 	\label{eq:euclidean-distance}
@@ -65,7 +65,28 @@ A questo punto, per trovare la posizione di \textit{match} migliore, \`e necessa
 \end{equation}
 Possiamo notare che ci siamo appena ricondotti alla risoluzione di un problema di \textit{correlazione lineare}, come descritto in \ref{sec:math-convolution}. In particolare, considerando i due termini $A(r,s)$ e $B$ come costanti\footnote{Sfortunatamente, l'assunzione che il termine $A(r,s)$ sia costante non vale generalmente ed \`e per questo necessario l'utilizzo di nozioni pi\`u avanzate, come il \textit{coefficiente di correlazione}.}, otteniamo proprio l'equazione \ref{eq:correlation}.\par
 Il problema principale del \textit{template matching} \`e la poca resistenza a trasformazioni geometriche, anche semplici. Un modo per evitare il presentarsi di questi problemi \`e quello di utilizzare diverse immagini \textit{template}, scalate e ruotate, a discapito dell'efficienza di esecuzione.
-
+\begin{figure}[H]
+	\centering
+	\resizebox{\textwidth}{!}{
+		\centering
+		\subfloat[Scene] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/lena-template-matching-input.png}}
+			}
+		}
+		\subfloat[Template] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/lena-lips-template.png}}
+			}
+		}
+		\subfloat[Match] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/lena-template-matching-output.png}}
+			}
+		}
+	}
+	\caption{Esempio di \textit{template matching}} \label{fig:template-matching}
+\end{figure}
 
 \section{Feature matching}
 \label{sec:feature-matching}
@@ -75,8 +96,31 @@ Esistono vari algoritmi di \textit{feature matching}, come \textit{KNN} (\textit
 	\item \textit{Esaustivo} $\gets$ Ritorna il miglior \textit{match} (\textit{brute force}) o i migliori $K$ \textit{match}, per ciascuna \textit{feature}, in senso assoluto
 	\item \textit{Approssimato} $\gets$ \`E basato sull'utilizzo di algoritmi efficienti di ricerca \textit{nearest neighbor} approssimata\footnote{La libreria \textit{OpenCV} si appoggia alla libreria esterna \textit{FLANN (Fast Library for Approximate Nearest Neighbors)} per questo tipo di operazioni.}, che vengono utilizzati solo per insiemi di \textit{feature} di dimensioni elevate 
 \end{itemize}\par
-Alcuni degli algoritmi pi\`u conosciuti e utilizzati per il calcolo di \textit{keypoints} e \textit{descrittori} sono \textit{SIFT (Scale Invariant Feature Transform)} \cite{bib:sift}, \textit{SURF (Speeded Up Robust Feature)} \cite{bib:surf}, \textit{AKAZE (Accelerated KAZE \cite{bib:kaze})} \cite{bib:akaze}, \textit{BRISK (Binary Robust Invariant Scalable Keypoints)} \cite{bib:brisk}, \textit{ORB (Oriented FAST and Rotated BRIEF)} \cite{bib:orb} e altri.
-
+Alcuni degli algoritmi pi\`u conosciuti e utilizzati per il calcolo di \textit{keypoints} e \textit{descrittori} sono \textit{SIFT (Scale Invariant Feature Transform)} \cite{bib:sift}, \textit{SURF (Speeded Up Robust Feature)} \cite{bib:surf}, \textit{AKAZE (Accelerated KAZE \cite{bib:kaze})} \cite{bib:akaze}, \textit{BRISK (Binary Robust Invariant Scalable Keypoints)} \cite{bib:brisk}, \textit{ORB (Oriented FAST and Rotated BRIEF)} \cite{bib:orb} e altri.\par
+In figura \ref{fig:keypoints} alcuni esempi di \textit{keypoints} ricavati da un'immagine messa a disposizione dal \textit{vision toolbox} del software \textit{MATLAB}.
+\begin{figure}[H]
+	\centering
+	\resizebox{\textwidth}{!}{
+		\centering
+		\subfloat[Input] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/building.png}}
+			}
+		}
+		\subfloat[\textit{SURF}] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/building-surf-keypoints.png}}
+			}
+		}
+		\subfloat[\textit{AKAZE}] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/building-akaze-keypoints.png}}
+			}
+		}
+	}
+	\caption[Rappresentazione di alcune tipologie di \textit{keypoints}]{Rappresentazione di alcune tipologie di \textit{keypoints}\protect\footnotemark} \label{fig:keypoints}
+\end{figure}
+\footnotetext{Fonte: \emph{A Comparative Analysis of SIFT, SURF, KAZE, AKAZE, ORB, and BRISK} \cite{bib:feature-matching-comparison}}
 
 \section{Shape detection}
 \label{sec:shape-detection}
@@ -109,7 +153,7 @@ Dato che il gradiente \`e un vettore, questo avr\`a modulo e direzione\footnote{
 	\theta (u, v) = \arctan{\frac{I_{x}(u, v)}{I_{y}(u, v)}}
 	\label{eq:image-gradient-direction}
 \end{equation}\par
-Per computare il gradiente di un'immagine, nella pratica viene effettuata una convoluzione con dei particolari filtri. Per esempio, utilizzando il filtro di \textit{Sobel-Feldman}:\\
+Per computare il gradiente di un'immagine, nella pratica viene effettuata una convoluzione con dei particolari filtri. Per esempio, utilizzando il filtro di \textit{Sobel-Feldman} (vedi figura \ref{fig:sobel}):\\
 \vspace*{15pt}
 \hspace*{-8pt}
 \noindent\begin{minipage}{.5\linewidth}
@@ -158,7 +202,28 @@ oppure quello di \textit{Prewitt} \cite{bib:prewitt}:\\
 		\label{eq:prewitt-y}
 	\end{equation}
 \end{minipage}
-
+\begin{figure}[h]
+	\centering
+	\resizebox{\textwidth}{!}{
+		\centering
+		\subfloat[Input] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/mser-east-input.png}}
+			}
+		}
+		\subfloat[\textit{Sobel} direzione $x$] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/sobel-x.png}}
+			}
+		}
+		\subfloat[\textit{Sobel} direzione $y$] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.5\linewidth]{img/sobel-y.png}}
+			}
+		}
+	}
+	\caption{Operatore \textit{Sobel} per \textit{edge detection}} \label{fig:sobel}
+\end{figure}
 
 \subsection{Canny edge detector}
 \label{subsec:canny}
@@ -227,7 +292,7 @@ L'approccio ideale per i problemi di \textit{edge detection} sarebbe quello di u
 \label{sec:image-matching-comparison}
 Inizialmente, la libreria QI-OCR prevedeva il solo utilizzo dell'algoritmo \textit{SIFT} per la localizzazione del documento. A seguito di uno studio comparativo fra gli algoritmi di \textit{image matching} sopra descritti, \`e stato deciso di scartare algoritmi di \textit{template matching}, per favorire quelli di \textit{feature matching} e \textit{shape detection}. In particolare, i primi vengono utilizzati perch\`e invarianti per trasformazioni fotometriche e per tutte le trasformazioni geometriche menzionate, ad eccezione di quelle prospettiche; mentre i secondi vengono utilizzati perch\`e computazionalmente efficienti e possibilmente invarianti anche per trasformazioni prospettiche, anche se non molto resistenti a cambi di illuminazione e/o contrasto dell'immagine.\par
 Adesso, l'esecuzione della libreria prevede dunque l'utilizzo congiunto degli algoritmi \textit{SIFT}, \textit{SURF}, \textit{AKAZE} e \textit{BRISK} e della rete \textit{HED}, tramite l'impiego di diversi \textit{thread}. Non appena uno dei thread eseguiti torna il risultato prodotto al \textit{processo padre}, l'esecuzione degli altri thread viene interrotta.\par
-L'algoritmo che ha restituito i migliori risultati \`e \textit{AKAZE}, che mantiene all'incirca l'accuratezza di \textit{SIFT}, dimezzando i tempi di esecuzione. L'algoritmo che invece ha restituito i peggiori risultati \`e \textit{ORB}, implementato in fase preliminare e scartato successivamente. Per quanto riguarda \textit{HED} invece, una realizzazione stabile \`e ancora in fase di lavorazione.\par
+L'algoritmo che ha restituito i migliori risultati \`e \textit{AKAZE}, che mantiene all'incirca l'accuratezza di \textit{SIFT}, riducendo i tempi di esecuzione. L'algoritmo che invece ha restituito i peggiori risultati \`e \textit{ORB}, implementato in fase preliminare e scartato successivamente. Per quanto riguarda \textit{HED} invece, una realizzazione stabile \`e ancora in fase di lavorazione.\par
 Infine, per consentire la produzione di \textit{test massivi} e valutare l'accuratezza e la velocit\`a ottenibile con ciascuno degli algoritmi implementati, la libreria risulta configurabile in base al tipo di localizzazione che si intende effettuare. I risultati riportati sono frutto dell'elaborazione da parte della libreria di un insieme di circa 400 documenti d'identit\`a: 
 \begin{table}[H]
 	\centering
@@ -245,6 +310,6 @@ Infine, per consentire la produzione di \textit{test massivi} e valutare l'accur
 	\caption{Analisi comparativa algoritmi di \textit{feature matching}}
 	\label{tab:feature-matching-comparison}
 \end{table}
-Come si pu\`o notare dai risultati in tabella \ref{tab:feature-matching-comparison}, \textit{SURF} risulta essere il miglior \textit{feature matcher} in termini di accuratezza, mentre \textit{BRISK} \`e quello che performa meglio dal punto di vista temporale. Come gi\`a anticipato, in casi d'uso reali \textit{AKAZE} restituisce il miglior rapporto qualit\`a/tempo di esecuzione.\par
+Come si pu\`o notare dai risultati in tabella \ref{tab:feature-matching-comparison}, \textit{SURF} risulta essere il miglior \textit{feature matcher} in termini di accuratezza, mentre \textit{BRISK} \`e quello che ha prestazioni migliori dal punto di vista temporale. Come gi\`a anticipato, in casi d'uso reali \textit{AKAZE} restituisce il miglior rapporto qualit\`a/tempo di esecuzione.\par
 L'utilizzo congiunto dei vari \textit{feature matcher} \`e descritto dalla parola chiave \textit{All}: possiamo osservare come l'accuratezza incrementi notevolmente, con un ovvio decremento dell'efficienza della libreria.\par
 \`E tutt'ora in fase di sviluppo una soluzione che permetta di ottenere dei buoni risultati in tempi ragionevoli. Questa soluzione dovr\`a prevedere una particolare condizione che suggerisca l'algoritmo di \textit{image matching} pi\`u consono da utilizzare, per ogni esecuzione.

@@ -6,7 +6,7 @@
 \label{sec:image-bin-intro}
 Nel campo dell'\textit{image processing} ricopre un ruolo fondamentale la possibilit\`a di distinguere diversi oggetti, forme e contorni presenti nell'immagine in analisi. Per far ci\`o \`e possibile ricorrere a svariate metodologie, che sono strettamente dipendenti dal contesto in cui si intende operare. Per esempio, nel caso del \textit{riconoscimento ottico dei caratteri} (\textit{OCR}), le operazioni che andranno descritte assumono importanza assoluta, dato che questo tipo di applicazione, per operare al meglio, ha spesso bisogno di ricevere in input un'immagine in bianco e nero, in cui lo sfondo \`e di colore bianco e il testo \`e di colore nero. Gli argomenti affrontati, nel caso di un'applicazione \textit{OCR}, saranno soprattutto utili nel caso in cui il motore utilizzato sia \textit{open-source} (vedi \textit{Tesseract}), ovvero nel caso in cui un buon \textit{pre-processing} dell'immagine possa fare la differenza. In questo capitolo andremo quindi ad analizzare gli \textit{algoritmi} pi\`u ricorrenti nell'ambito del \textit{thresholding} di immagini e nella sezione \ref{sec:image-bin-proposed-approach} affronteremo un approccio specificamente studiato per i casi d'uso della libreria QI-OCR.\par
 Da qui in avanti ipotizzeremo di lavorare con immagini originali in \textit{scala di grigi} con profondit\`a 8 bit, anche se i metodi descritti possono facilmente essere generalizzati per immagini con pi\`u di un canale colore.\par
-Consideriamo l'immagine \ref{fig:image-bin-input} come esempio per l'analisi delle operazioni che andremo a descrivere.
+Consideriamo l'immagine riportata in figura \ref{fig:image-bin-input} come esempio per l'analisi delle operazioni che andremo a descrivere.
 \begin{figure}[h]
 	\centering
 	\frame{\includegraphics[width=\linewidth]{img/image-bin-input.png}}
@@ -50,7 +50,7 @@ Nel caso in cui il contesto in cui si opera sia relativamente statico, la \texti
 
 \section{Sogliatura adattativa (o locale)}
 \label{sec:image-bin-local}
-Questo metodo di \textit{thresholding} consente di sopperire alle mancanze della sogliatura globale, nel caso in cui le immagini in analisi presentino illuminazione e/o contrasto non uniforme. In particolare, questa tecnica dinamica computa automaticamente differenti valori di soglia per diverse aree dell'immagine. Dunque, l'immagine viene suddivisa in tante \textit{sotto-immagini}, abbastanza piccole da poter ipotizzare che in ciascuna illuminazione e contrasto siano sufficientemente uniformi. Una volta partizionata l'immagine, un valore di soglia viene calcolato per ciascuna \textit{finestra}. Il calcolo di ogni valore di soglia dipende dall'implementazione specifica dell'algoritmo, ma genericamente si ricorre all'utilizzo, per ogni sotto-immagine, di semplici operatori statistici, come la media, la mediana o la media fra massimo e minimo.\par
+Questo metodo di \textit{thresholding} consente di sopperire alle mancanze della sogliatura globale, nel caso in cui le immagini in analisi presentino illuminazione e/o contrasto non uniforme. In particolare, questa tecnica dinamica computa automaticamente differenti valori di soglia per diverse aree dell'immagine. Dunque, l'immagine viene suddivisa in tante \textit{sotto-immagini}, abbastanza piccole da poter ipotizzare che in ciascuna di esse illuminazione e contrasto siano sufficientemente uniformi. Una volta partizionata l'immagine, un valore di soglia viene calcolato per ciascuna \textit{finestra}. Il calcolo di ogni valore di soglia dipende dall'implementazione specifica dell'algoritmo, ma genericamente si ricorre all'utilizzo, per ogni sotto-immagine, di semplici operatori statistici, come la media, la mediana o la media fra massimo e minimo.\par
 Alcune tecniche di sogliatura locale efficaci sono implementate da algoritmi quali quello di \textit{Niblack} \cite{bib:niblack} e \textit{Sauvola} \cite{bib:sauvola}. In particolare, l'algoritmo di \textit{Niblack} prevede l'utilizzo delle metriche di media e deviazione standard, per una specifica finestra centrata su ciascun pixel dell'immagine. La formula utilizzata per calcolare un generico valore di soglia \`e data da:
 \begin{equation}
 	\label{eq:niblack}
@@ -59,7 +59,7 @@ Alcune tecniche di sogliatura locale efficaci sono implementate da algoritmi qua
 dove $T(x, y)$ indica il valore di soglia per il pixel in posizione $(x, y)$, $m(x, y)$ ($s(x, y)$) indica la media (deviazione standard) dei valori dei pixel vicini a quello centrato sulla finestra corrente e $k$ \`e un coefficiente, che pu\`o essere determinato empiricamente\footnote{\textit{Niblack} consiglia l'impostazione del parametro $k$ al valore $-0.2$.}.\par
 L'utilizzo di parametri configurabili \`e molto comune per algoritmi di questo tipo, in quanto questi risultano essere fortemente dipendenti dal contesto di utilizzo. Un esempio pratico riguarda la libreria \textit{OpenCV}, che nella funzione $\textproc{adaptiveThreshold}$ consente di selezionare un valore $c$, che viene sottratto da ciascun valore di soglia di ogni sotto-immagine. Per esempio, nel caso in cui il valore di soglia venga calcolato utilizzando la media $mean$, il limite scelto non sar\`a esattamente $mean$, ma $mean - c$.\par
 Purtroppo, il problema principale della sogliatura adattativa \`e che tende a valorizzare tutti gli elementi presenti nell'immagine, non consentendo di differenziare al meglio le componenti d'interesse da quelle che invece si vorrebbero scartare.
-\begin{algorithm}
+\begin{algorithm}[H]
 	\caption{Sogliatura adattativa}
 	\label{alg:thresh-local}
 	\begin{algorithmic}[1]
@@ -78,7 +78,9 @@ Purtroppo, il problema principale della sogliatura adattativa \`e che tende a va
 			\Return $\vars{image}$
 		\EndFunction
 	\end{algorithmic}
-\end{algorithm}
+\end{algorithm}\par
+In figura \ref{fig:image-bin-local} \`e possibile osservare un esempio di sogliatura adattativa di \textit{Gauss}, in cui il valore di soglia di ciascuna sotto-immagine \`e dato dalla somma pesata dei valori vicini, dove i pesi sono dati da una \textit{finestra Gaussiana}.
+
 \begin{figure}[H]
 	\centering
 	\frame{\includegraphics[width=\linewidth]{img/local-thresh-gaussian.png}}
@@ -102,7 +104,7 @@ Questo tipo di sogliatura utilizza tecniche di analisi dell'\textit{istogramma}\
 	}
 	\caption{Istogramma bimodale} \label{fig:bimodal-hist}
 \end{figure}
-Nel caso in cui l'immagine in analisi non presenti esattamente due massimi locali nella funzione istogramma, il procedimento di \textit{Otsu} potrebbe per\`o portare a risultati indesiderati.
+Nel caso in cui l'immagine in analisi non presenti esattamente due massimi locali nella funzione istogramma, il procedimento di \textit{Otsu} potrebbe per\`o portare a risultati indesiderati, come \`e possibile osservare in figura \ref{fig:image-bin-otsu}.
 \begin{figure}[H]
 	\centering
 	\frame{\includegraphics[width=\linewidth]{img/otsu-thresh.png}}
@@ -153,7 +155,7 @@ Il punto \ref{enum:image-bin-proposed-approach-simple-otsu} viene utilizzato per
 	\caption{Output \textit{bounding boxes} caratteri sogliatura proposta}
 	\label{fig:image-bin-proposed-approach-chars}
 \end{figure}
-Il punto \ref{enum:image-bin-proposed-approach-simple-cut} utilizza una sorta di strategia di \textit{clustering}, che prevede prima di tutto l'individuazione dei contorni presenti nell'immagine, tramite l'algoritmo \textit{Canny edge detector}, descritto in \ref{subsec:canny}, e da questi la definizione dei vari \textit{bounding boxes}, ovvero dei minimi rettangoli contenenti ciascuna forma riconosciuta. A questo punto i \textit{bounding boxes} vengono filtrati in base alla dimensione, eliminando quelli troppo piccoli (\textit{noise}) e mantenendo solamente quelli della giusta dimensione, pari all'incirca alla dimensione del font utilizzato. A partire dai \textit{bounding boxes} viene poi calcolato il valore di ordinata pi\`u frequente, arrotondato alla decina pi\`u vicina, e il massimo valore di altezza fra tutti, che vengono utilizzati per effettuare un taglio preciso dell'immagine al rettangolo che si suppone contenga il testo di interesse. Ovviamente l'approccio di ritaglio utilizzato \`e efficace solamente nel caso in cui il testo sia l'elemento preminente nell'immagine.
+Il punto \ref{enum:image-bin-proposed-approach-simple-cut} utilizza una sorta di strategia di \textit{clustering}, che prevede prima di tutto l'individuazione dei contorni presenti nell'immagine (vedi figura \ref{fig:image-bin-proposed-approach-canny}), tramite l'algoritmo \textit{Canny edge detector}, descritto in \ref{subsec:canny}, e da questi la definizione dei vari \textit{bounding boxes} (vedi figura \ref{fig:image-bin-proposed-approach-chars}), ovvero dei minimi rettangoli contenenti ciascuna forma riconosciuta. A questo punto i \textit{bounding boxes} vengono filtrati in base alla dimensione, eliminando quelli troppo piccoli (\textit{noise}) e mantenendo solamente quelli della giusta dimensione, pari all'incirca alla dimensione del font utilizzato. A partire dai \textit{bounding boxes} viene poi calcolato il valore di ordinata pi\`u frequente, arrotondato alla decina pi\`u vicina, e il massimo valore di altezza fra tutti, che vengono utilizzati per effettuare un taglio preciso dell'immagine al rettangolo che si suppone contenga il testo di interesse, per ottenere un risultato come quello riportato in figura \ref{fig:image-bin-proposed-approach-simple}. Ovviamente l'approccio di ritaglio utilizzato \`e efficace solamente nel caso in cui il testo sia l'elemento preminente nell'immagine.
 \begin{figure}[H]
 	\centering
 	\frame{\includegraphics[width=\linewidth]{img/image-bin-proposed-approach-simple.png}}
@@ -180,7 +182,7 @@ Infine, il punto \ref{enum:image-bin-proposed-approach-complex-tophat} applica l
 	\label{eq:modified-top-hat}
 	\tilde{g}_{Q_{SE}}^{w}(I) = I - \tilde{\phi}_{R}(\tilde{\gamma}_{R}(I)),
 \end{equation}
-Questo tipo di operazione consente di correggere efficacemente condizioni di luce e/o contrasto non uniforme e  di recuperare testi leggermente sbiaditi, che venivano invece penalizzati dalla prima trasformazione descritta.
+Questo tipo di operazione (vedi figura \ref{fig:image-bin-proposed-approach-complex}) consente di correggere efficacemente condizioni di luce e/o contrasto non uniforme e  di recuperare testi leggermente sbiaditi, che venivano invece penalizzati dalla prima trasformazione descritta.
 \begin{figure}[H]
 	\centering
 	\frame{\includegraphics[width=\linewidth]{img/image-bin-proposed-approach-complex.png}}
