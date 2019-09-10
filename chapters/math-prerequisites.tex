@@ -88,7 +88,7 @@ Alcuni esempi di filtri classici:
 In figura \ref{fig:gauss-filter} \`e possibile osservare un esempio di sfocatura di un'immagine, tramite l'applicazione di un filtro di \textit{Gauss}.
 \begin{figure}[H]
 	\centering
-	\resizebox{\textwidth}{!}{
+	\resizebox{0.9\textwidth}{!}{
 		\centering
 		\subfloat[Input] {%
 			\scalebox{0.5}[0.5] {
@@ -116,7 +116,13 @@ Il risultato dell'operazione di \textit{erosione} di un'immagine mostra dove lo 
 	\label{eq:erosion}
 	[\epsilon_{Q_{SE}}(I)](\textbf{x}) = \underset{\textbf{s}\in Q_{SE}}{\bigwedge}(I(\textbf{x}+\textbf{s}))
 \end{equation}\par
-\begin{figure}[t]
+Il risultato dell'operazione di \textit{dilatazione} di un'immagine mostra dove lo SE tocca gli oggetti dell'immagine, ovvero, intuitivamente permette di aggiungere pixel al contorno di componenti connesse di colore bianco, in quantit\`a dipendente dalla grandezza dello SE. In formule:
+\begin{equation}
+	\label{eq:dilation}
+	[\delta_{Q_{SE}}(I)](\textbf{x}) = \underset{\textbf{s}\in Q_{SE}}{\bigvee}(I(\textbf{x}+\textbf{s}))
+\end{equation}\par
+In figura \ref{fig:erosion-dilation} \`e possibile osservare l'applicazione degli operatori di \textit{erosione} e \textit{dilatazione}, con input-output in ordine sinistra-destra e destra-sinistra, rispettivamente.
+\begin{figure}[h]
 	\centering
 	\subfloat[Prima (dopo)] {
 		\resizebox{6cm}{5cm}{%
@@ -134,13 +140,18 @@ Il risultato dell'operazione di \textit{erosione} di un'immagine mostra dove lo 
 	}
 	\caption{Erosione (dilatazione) morfologica con elemento strutturante rettangolare} \label{fig:erosion-dilation}
 \end{figure}
-Il risultato dell'operazione di \textit{dilatazione} di un'immagine mostra dove lo SE tocca gli oggetti dell'immagine, ovvero, intuitivamente permette di aggiungere pixel al contorno di componenti connesse di colore bianco, in quantit\`a dipendente dalla grandezza dello SE. In formule:
-\begin{equation}
-	\label{eq:dilation}
-	[\delta_{Q_{SE}}(I)](\textbf{x}) = \underset{\textbf{s}\in Q_{SE}}{\bigvee}(I(\textbf{x}+\textbf{s}))
-\end{equation}
 
-\begin{figure}[t]
+Le operazioni di \textit{apertura} (\textit{chiusura}) sono invece la combinazione in sequenza di erosione (dilatazione) e dilatazione (erosione) dello SE con la propria \textit{riflessione}\footnote{La \textit{riflessione} di un insieme di punti $P$ di un'immagine binaria $I$ rispetto all'origine viene definita come $\check{P}=\{(-u,-v) \colon (u,v)\in P\}$.}. Queste due operazioni vengono molto utilizzate per rimuovere "sporco" (\textit{noise}) dalle immagini e per "chiudere" piccoli "buchi" all'interno di oggetti che si trovano nel \textit{foreground}. In formule:
+\begin{equation}
+	\label{eq:opening}
+	\gamma_{Q_{SE}}(I) = \delta_{\check{Q_{SE}}}(\epsilon_{Q_{SE}}(I)),
+\end{equation}
+\begin{equation}
+	\label{eq:closing}
+	\phi_{Q_{SE}}(I) = \epsilon_{\check{Q_{SE}}}(\delta_{Q_{SE}}(I))
+\end{equation}\par
+In figura \ref{fig:opening} \`e possibile osservare la rimozione delle aree \textit{foreground} di piccola dimensione, grazie all'utilizzo dell'\textit{apertura} morfologica.
+\begin{figure}[h]
 	\centering
 	\subfloat[Prima] {
 		\begin{tikzpicture}[framed,background rectangle/.style={draw=black,fill=black},scale=0.8]
@@ -162,16 +173,6 @@ Il risultato dell'operazione di \textit{dilatazione} di un'immagine mostra dove 
 	}
 	\caption{Apertura morfologica con elemento strutturante circolare} \label{fig:opening}
 \end{figure}
-
-Le operazioni di \textit{apertura} (\textit{chiusura}) sono invece la combinazione in sequenza di erosione (dilatazione) e dilatazione (erosione) dello SE con la propria \textit{riflessione}\footnote{La \textit{riflessione} di un insieme di punti $P$ di un'immagine binaria $I$ rispetto all'origine viene definita come $\check{P}=\{(-u,-v) \colon (u,v)\in P\}$.}. Queste due operazioni vengono molto utilizzate per rimuovere "sporco" (\textit{noise}) dalle immagini e per "chiudere" piccoli "buchi" all'interno di oggetti che si trovano nel \textit{foreground}. In formule:
-\begin{equation}
-	\label{eq:opening}
-	\gamma_{Q_{SE}}(I) = \delta_{\check{Q_{SE}}}(\epsilon_{Q_{SE}}(I)),
-\end{equation}
-\begin{equation}
-	\label{eq:closing}
-	\phi_{Q_{SE}}(I) = \epsilon_{\check{Q_{SE}}}(\delta_{Q_{SE}}(I))
-\end{equation}
 
 \subsection{Ricostruzione morfologica}
 \label{subsec:math-morph-reconstruction}
@@ -204,7 +205,30 @@ Concettualmente, le iterazioni sopra definite potrebbero continuare indefinitame
 	\label{eq:dilation-reconstruction}
 	R^{\delta}_{I}(F)=[\delta_{Q_{SE}}(F)]^{(n)}_{I}(\textbf{x})
 \end{equation}
-cos\`i definito viene denominato rispettivamente \textit{erosione} e \textit{dilatazione} con \textit{ricostruzione}.\par 
+cos\`i definito viene denominato rispettivamente \textit{erosione} e \textit{dilatazione} con \textit{ricostruzione} (vedi figura \ref{fig:dilation-reconstruction}).\par
+\begin{figure}[H]
+	\centering
+	\resizebox{\textwidth}{!}{
+		\centering
+		\subfloat[Mask] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/reconstruction-mask.png}}
+			}
+		}
+		\subfloat[Marker] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/reconstruction-marker.png}}
+			}
+		}
+		\subfloat[Output] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/reconstruction-output.png}}
+			}
+		}
+	}
+	\caption[\textit{Dilatazione} con \textit{ricostruzione}]{\textit{Dilatazione} con \textit{ricostruzione}\protect\footnotemark} \label{fig:dilation-reconstruction}
+\end{figure}
+\footnotetext{Fonte: \emph{Advanced morphological image processing} \cite{bib:advanced-morphological}}
 Definiamo adesso le operazioni di \textit{apertura} e \textit{chiusura} con \textit{ricostruzione}: l'operazione di apertura permette di rimuovere oggetti in base allo SE usato, ma ha il limite di non preservare le altre strutture, che vengono comunque modificate. Questo limite viene completamente superato dall'operatore di \textit{apertura con ricostruzione}, che opera nel seguente modo: l'immagine viene erosa con lo SE come per l'apertura normale, ma invece di far seguire una dilatazione, si opera una ricostruzione usando l'immagine originale come \textit{mask}, e l'immagine erosa come \textit{marker}. L'operazione di \textit{chiusura con ricostruzione} opera in modo analogo. In formule:
 \begin{equation}
 	\label{eq:opening-reconstruction}
@@ -213,7 +237,31 @@ Definiamo adesso le operazioni di \textit{apertura} e \textit{chiusura} con \tex
 \begin{equation}
 	\label{eq:closing-reconstruction}
 	\tilde{\phi}_{R}(I) = \phi_{R}^{(n)}(I) = R_{I}^{\epsilon}[\delta^{(n)}(I)]
-\end{equation}
+\end{equation}\par
+In figura \ref{fig:opening-reconstruction} \`e possibile osservare un confronto fra le operazioni di \textit{apertura} morfologica "standard" e con \textit{ricostruzione}, in cui l'obiettivo \`e quello di estrarre le lettere con altezza superiore a $50px$, tramite l'utilizzo di uno SE di dimensione $51\times1$.
+\begin{figure}[H]
+	\centering
+	\resizebox{\textwidth}{!}{
+		\centering
+		\subfloat[Input] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/opening-reconstruction-input.png}}
+			}
+		}
+		\subfloat[Output \textit{apertura}] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/opening-output.png}}
+			}
+		}
+		\subfloat[Output \textit{apertura} con \textit{ricostruzione}] {%
+			\scalebox{0.5}[0.5] {
+				\frame{\includegraphics[width=.8\linewidth]{img/opening-reconstruction-output.png}}
+			}
+		}
+	}
+	\caption[\textit{Apertura} con \textit{ricostruzione}]{\textit{Apertura} con \textit{ricostruzione}\protect\footnotemark} \label{fig:opening-reconstruction}
+\end{figure}
+\footnotetext{Fonte: \emph{Advanced morphological image processing} \cite{bib:advanced-morphological}}
 
 \subsection{Altri operatori morfologici}
 \label{subsec:math-morph-others}
