@@ -17,7 +17,7 @@ Consideriamo l'immagine riportata in figura \ref{fig:image-bin-input} come esemp
 
 \section{Sogliatura globale}
 \label{sec:image-bin-global}
-\`E il pi\`u semplice metodo di \textit{thresholding}, che prevede la scelta di un determinato valore di soglia, compreso tra 0 e 255. L'algoritmo di sogliatura prevede quindi la scansione, pixel per pixel, dell'immagine e, nel caso in cui il valore del pixel esaminato sia minore del valore di soglia, tale pixel assumer\`a valore zero, che corrisponde al colore nero. Altrimenti, nel caso in cui il valore del pixel esaminato sia maggiore o uguale del valore di soglia, tale pixel assumer\`a valore 255, che corrisponde al colore bianco. Risulta facile intuire quale possa essere il problema principale di questo tipo di algoritmo di sogliatura, ovvero la scelta del valore di soglia.
+\`E il pi\`u semplice metodo di \textit{thresholding}, che prevede la scelta di un determinato valore di soglia, compreso tra 0 e 255. L'algoritmo di sogliatura \ref{alg:thresh-global} prevede quindi la scansione, pixel per pixel, dell'immagine e, nel caso in cui il valore del pixel esaminato sia minore del valore di soglia, tale pixel assumer\`a valore zero, che corrisponde al colore nero. Altrimenti, nel caso in cui il valore del pixel esaminato sia maggiore o uguale del valore di soglia, tale pixel assumer\`a valore 255, che corrisponde al colore bianco. Risulta facile intuire quale possa essere il problema principale di questo tipo di algoritmo di sogliatura, ovvero la scelta del valore di soglia.
 Nel caso in cui il contesto in cui si opera sia relativamente statico, la \textit{sogliatura globale} risulta comunque l'opzione pi\`u consigliata, per la sua facilit\`a di implementazione. In particolare, il metodo descritto risulta adatto se le immagini in analisi presentano all'incirca caratteristiche uniformi in termini di illuminazione e contrasto. Se cos\`i non fosse, sarebbe necessario valutare l'implementazione di algoritmi leggermente pi\`u complessi.\par
 In figura \ref{fig:image-bin-global} \`e possibile osservare come l'attenta scelta del corretto valore di soglia possa portare a risultati eccellenti.
 \begin{algorithm}
@@ -51,11 +51,11 @@ In figura \ref{fig:image-bin-global} \`e possibile osservare come l'attenta scel
 
 \section{Sogliatura adattativa (o locale)}
 \label{sec:image-bin-local}
-Questo metodo di \textit{thresholding} consente di sopperire alle mancanze della sogliatura globale, nel caso in cui le immagini in analisi presentino illuminazione e/o contrasto non uniforme. In particolare, questa tecnica dinamica computa automaticamente differenti valori di soglia per diverse aree dell'immagine. Dunque, l'immagine viene suddivisa in tante \textit{sotto-immagini}, abbastanza piccole da poter ipotizzare che in ciascuna di esse illuminazione e contrasto siano sufficientemente uniformi. Una volta partizionata l'immagine, un valore di soglia viene calcolato per ciascuna \textit{finestra}. Il calcolo di ogni valore di soglia dipende dall'implementazione specifica dell'algoritmo, ma genericamente si ricorre all'utilizzo, per ogni sotto-immagine, di semplici operatori statistici, come la media, la mediana o la media fra massimo e minimo.\par
+Questo metodo di \textit{thresholding} consente di sopperire alle mancanze della sogliatura globale, nel caso in cui le immagini in analisi presentino illuminazione e/o contrasto non uniforme. In particolare, questa tecnica dinamica computa automaticamente differenti valori di soglia per diverse aree dell'immagine. Dunque, l'immagine viene suddivisa in tante \textit{sotto-immagini}, abbastanza piccole da poter ipotizzare che in ciascuna di esse illuminazione e contrasto siano sufficientemente uniformi. Una volta partizionata l'immagine, un valore di soglia viene calcolato per ciascuna \textit{finestra}. Il calcolo di ogni valore di soglia dipende dall'implementazione specifica dell'algoritmo \ref{alg:thresh-local}, ma genericamente si ricorre all'utilizzo, per ogni sotto-immagine, di semplici operatori statistici, come la media, la mediana o la media fra massimo e minimo.\par
 Alcune tecniche di sogliatura locale efficaci sono implementate da algoritmi quali quello di \textit{Niblack} \cite{bib:niblack} e \textit{Sauvola} \cite{bib:sauvola}. In particolare, l'algoritmo di \textit{Niblack} prevede l'utilizzo delle metriche di media e deviazione standard, per una specifica finestra centrata su ciascun pixel dell'immagine. La formula utilizzata per calcolare un generico valore di soglia \`e data da:
 \begin{equation}
-	\label{eq:niblack}
 	T(x, y) = m(x, y) + k \cdot s(x, y),
+	\label{eq:niblack}
 \end{equation}
 dove $T(x, y)$ indica il valore di soglia per il pixel in posizione $(x, y)$, $m(x, y)$ ($s(x, y)$) indica la media (deviazione standard) dei valori dei pixel vicini a quello centrato sulla finestra corrente e $k$ \`e un coefficiente, che pu\`o essere determinato empiricamente\footnote{\textit{Niblack} consiglia l'impostazione del parametro $k$ al valore $-0.2$.}.\par
 L'utilizzo di parametri configurabili \`e molto comune per algoritmi di questo tipo, in quanto questi risultano essere fortemente dipendenti dal contesto di utilizzo. Un esempio pratico riguarda la libreria \textit{OpenCV}, che nella funzione $\textproc{adaptiveThreshold}$ consente di selezionare un valore $c$, che viene sottratto da ciascun valore di soglia di ogni sotto-immagine. Per esempio, nel caso in cui il valore di soglia venga calcolato utilizzando la media $mean$, il limite scelto non sar\`a esattamente $mean$, ma $mean - c$.\par
@@ -91,10 +91,11 @@ In figura \ref{fig:image-bin-local} \`e possibile osservare un esempio di soglia
 
 \section{Sogliatura di Otsu}
 \label{sec:image-bin-otsu}
-Questo tipo di sogliatura utilizza tecniche di analisi dell'\textit{istogramma}\footnote{L'\textit{istogramma} $h$ di un'immagine $I$ in scala di grigi, con valori d'intensit\`a $\in [0, K - 1]$ e definiti nell'immagine della funzione $I$,  \`e una funzione tale che $h(i)$ \`e uguale al numero di pixel di $I$ con valore di intensit\`a $i$, per $0 \leq i < K$. Pi\`u formalmente $h(i)=|{(u, v)\colon I(u, v)=i}|$.} dell'immagine ed \`e particolarmente adatto per immagini \textit{bimodali} (vedi figura \ref{fig:bimodal-hist}), ovvero per immagini che presentano istogrammi con una netta separazione tra due picchi principali. La binarizzazione di \textit{Otsu} si occupa esattamente di trovare la "valle" di scissione fra tali picchi, che risulta essere proprio il valore di soglia ottimale per l'applicazione di un'operazione di sogliatura globale.\par
+Questo tipo di sogliatura utilizza tecniche di analisi dell'\textit{istogramma}\footnote{L'\textit{istogramma} $h$ di un'immagine $I$ in scala di grigi, con valori d'intensit\`a $\in [0, K - 1]$ e definiti nell'immagine della funzione $I$,  \`e una funzione tale che $h(i)$ \`e uguale al numero di pixel di $I$ con valore di intensit\`a $i$, per $0 \leq i < K$. Pi\`u formalmente $h(i)=|{(u, v)\colon I(u, v)=i}|$ \cite{bib:digital-image-processing}.} dell'immagine ed \`e particolarmente adatto per immagini \textit{bimodali} (vedi figura \ref{fig:bimodal-hist}), ovvero per immagini che presentano istogrammi con una netta separazione tra due picchi principali. La binarizzazione di \textit{Otsu} si occupa esattamente di trovare la "valle" di scissione fra tali picchi\footnote{L'algoritmo presume che nell'immagine da sogliare siano presenti due sole classi e quindi calcola la soglia ottima per separare queste due classi minimizzando la varianza intra classe \cite{bib:wikipedia}.}, che risulta essere proprio il valore di soglia ottimale per l'applicazione di un'operazione di sogliatura globale.\par
 \pgfplotsset{compat=1.16,width=13cm,height=7cm}
 \begin{figure}[H]
 	\centering
+	\hspace*{-15pt}
 	\resizebox{13cm}{7cm}{%
 		\begin{tikzpicture}[font=\sffamily]
 			\begin{axis}[ybar,bar width=1.5mm,ylabel={Numero di pixel},yticklabel=$\mathsf{\pgfmathprintnumber{\tick}}$,xticklabel=$\mathsf{\pgfmathprintnumber{\tick}}$,xlabel={Valore dei pixel}, xtick distance=50]
@@ -191,7 +192,7 @@ Questo tipo di operazione (vedi figura \ref{fig:image-bin-proposed-approach-comp
 	\label{fig:image-bin-proposed-approach-complex}
 \end{figure}
 A questo punto, il numero di chiamate OCR effettuabili viene fissato a un massimo di $3$ per campo, ovvero una chiamata per ciascun output prodotto dall'algoritmo di sogliatura proposto, riducendo notevolmente il tempo di esecuzione, senza compromettere l'accuratezza.\par
-Per valutare effettivamente i risultati del lavoro prodotto, sono stati effettuati diversi test con campioni casuali di 50 tessere sanitarie fronte, scelte da una distribuzione uniforme.
+Per valutare effettivamente i risultati del lavoro prodotto, sono stati effettuati diversi test con campioni casuali di 50 tessere sanitarie (fronte), scelte da una distribuzione uniforme.
 \begin{table}[H]
 	\centering
 	\resizebox{\textwidth}{!}{%

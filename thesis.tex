@@ -30,12 +30,12 @@
 %--------------------------------------------------------------
 \usepackage[italian]{babel}
 \usepackage[latin1]{inputenc} 
-\usepackage[T1]{fontenc} 
-\usepackage[square,numbers]{natbib} 
+\usepackage[T1]{fontenc}
+\usepackage[square,numbers,sort&compress]{natbib}
 \usepackage[fleqn]{amsmath}  
 \usepackage{ellipsis}
 \usepackage{listings}
-\usepackage{subfig}
+\usepackage[font=small]{subfig}
 \usepackage{caption}
 \usepackage{appendix}
 \usepackage{siunitx}
@@ -107,6 +107,8 @@ parts]{classicthesis}
 \usepackage{mathrsfs}
 \usetikzlibrary{arrows}
 \usetikzlibrary{backgrounds}
+\widowpenalty10000
+\clubpenalty10000
 %--------------------------------------------------------------
 \begin{document}
 \frenchspacing
@@ -126,6 +128,7 @@ parts]{classicthesis}
 %\include{intro} % use \myChapter command instead of \chapter
 \setcounter{tocdepth}{1}
 \tableofcontents
+\addtocontents{lof}{\protect\enlargethispage{\baselineskip}}
 \listoffigures
 \cleardoublepage
 \thispagestyle{empty}

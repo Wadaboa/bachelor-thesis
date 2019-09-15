@@ -12,29 +12,30 @@ Il metodo presentato in \cite{bib:mser} \`e un algoritmo di \textit{blob\footnot
 Introduciamo delle regioni che vengono denominate \textit{ER (Extremal Regions)}, nel senso che tutti i pixel interni hanno intensit\`a esclusivamente maggiore o minore dei pixel nel contorno esterno della regione. Le \textit{ER} godono di due importanti propriet\`a: sono invarianti per trasformazioni geometriche affini e per trasformazioni monot\`one di intensit\`a dell'immagine. Le regioni di interesse sono un sottoinsieme delle \textit{ER} e vengono denominate \textit{MSER} (\textit{Maximally Stable Extremal Regions}), poich\`e risultano \textit{stabili} sotto una serie di operazioni di \textit{thresholding} e permettono una rilevazione multi-scala delle regioni, nel senso che vengono individuate sia strutture molto piccole che molto grandi.\par
 Il grande vantaggio di questo \textit{blob detector} \`e la sua efficienza, in quanto l'enumerazione di tutte le \textit{ER} ha una complessit\`a temporale quasi lineare\footnote{In \cite{bib:mser-linear} \textit{Nist\'er} e \textit{Stew\'enius} propongono un metodo per l'enumerazione delle \textit{MSER} in tempo $\mathcal{O}(n)$, lineare nel numero di pixel dell'immagine.} di $\mathcal{O}(n\log{}\log{}n)$, data principalmente dall'algoritmo di enumerazione delle componenti connesse\footnote{Esiste una versione pi\`u efficiente, ma pi\`u articolata, dell'algoritmo per il \textit{labeling} delle componenti connesse (\textit{Rosenfeld-Pfaltz} \cite{bib:connected-components-fast}) con complessit\`a $\mathcal{O}(n\alpha(n))$, con $\alpha$ inversa della funzione di \textit{Ackermann}.}, con $n$ numero di pixel dell'immagine.\par
 Nella pratica, l'algoritmo presentato pu\`o essere adattato per vari scopi e in particolare per il riconoscimento di testo in ambienti naturali, come descritto in \cite{bib:mser-canny}.\par
-In figura \ref{fig:mser} un esempio di \textit{text detection} con l'utilizzo dell'algoritmo \textit{MSER} implementato nella libreria \textit{OpenCV}:
+In figura \ref{fig:mser} un esempio di \textit{text detection} con l'utilizzo dell'algoritmo \textit{MSER} implementato nella libreria \textit{OpenCV}.
 \begin{figure}[h]
 	\centering
 	\resizebox{\textwidth}{!}{
 		\centering
 		\subfloat[Input] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.8\linewidth]{img/mser-east-input.png}}
+				\frame{\includegraphics[width=.7\linewidth]{img/mser-east-input.png}}
 			}
 		}
 		\subfloat[Output] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.8\linewidth]{img/mser-regions.png}}
+				\frame{\includegraphics[width=.7\linewidth]{img/mser-regions.png}}
 			}
 		}
 		\subfloat[Output filtrato] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.8\linewidth]{img/mser-regions-filtered.png}}
+				\frame{\includegraphics[width=.7\linewidth]{img/mser-regions-filtered.png}}
 			}
 		}
 	}
 	\caption{\textit{Text detection} con \textit{MSER}} \label{fig:mser}
 \end{figure}
+\newpage
 
 
 \section{EAST}
@@ -46,12 +47,12 @@ L'approccio ideale per i problemi di \textit{text detection} sarebbe quello di u
 		\centering
 		\subfloat[Input] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=\linewidth]{img/mser-east-input.png}}
+				\frame{\includegraphics[width=.9\linewidth]{img/mser-east-input.png}}
 			}
 		}
 		\subfloat[Output] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=\linewidth]{img/east-output.png}}
+				\frame{\includegraphics[width=.9\linewidth]{img/east-output.png}}
 			}
 		}
 	}
@@ -106,17 +107,17 @@ Purtroppo, con il ritaglio statico utilizzato il rischio di perdita d'informazio
 		\centering
 		\subfloat[Nome] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/car-f-name-static.png}}
+				\frame{\includegraphics[width=.7\linewidth]{img/car-f-name-static.png}}
 			}
 		}
 		\subfloat[Cognome] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/car-f-surname-static.png}}
+				\frame{\includegraphics[width=.7\linewidth]{img/car-f-surname-static.png}}
 			}
 		}
 		\subfloat[Data di nascita] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/car-f-birthdate-static.png}}
+				\frame{\includegraphics[width=.7\linewidth]{img/car-f-birthdate-static.png}}
 			}
 		}
 	}
@@ -136,17 +137,17 @@ L'approccio proposto consente di risolvere le problematiche del ritaglio statico
 		\centering
 		\subfloat[Nome] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/car-f-name-dynamic.png}}
+				\frame{\includegraphics[width=.7\linewidth]{img/car-f-name-dynamic.png}}
 			}
 		}
 		\subfloat[Cognome] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/car-f-surname-dynamic.png}}
+				\frame{\includegraphics[width=.7\linewidth]{img/car-f-surname-dynamic.png}}
 			}
 		}
 		\subfloat[Data di nascita] {%
 			\scalebox{0.5}[0.5] {
-				\frame{\includegraphics[width=.5\linewidth]{img/car-f-birthdate-dynamic.png}}
+				\frame{\includegraphics[width=.7\linewidth]{img/car-f-birthdate-dynamic.png}}
 			}
 		}
 	}
