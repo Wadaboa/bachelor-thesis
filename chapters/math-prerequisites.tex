@@ -4,7 +4,7 @@
 
 \section{Immagini digitali}
 \label{sec:math-images}
-Un'immagine digitale \textit{I} con risoluzione $m\times n$ ($width \times height$) \`e una matrice di valori interi di dimensione $n\times m$, che pu\`o essere matematicamente interpretata come una funzione semplice (n\`e iniettiva, n\`e suriettiva) 
+Un'immagine digitale \textit{I} con risoluzione $m\times n$ ($width \times height$) \`e una matrice di valori interi di $n$ righe e $m$ colonne, che pu\`o essere matematicamente interpretata come una funzione semplice (n\'e iniettiva, n\'e suriettiva) 
 \begin{equation}
 	I: \mathbb{N}\times\mathbb{N}\supseteq X \to P\subseteq \mathbb{N}^{c},
 	\label{eq:digital-image-function}
@@ -268,7 +268,7 @@ In figura \ref{fig:opening-reconstruction} \`e possibile osservare un confronto 
 
 \subsection{Altri operatori morfologici}
 \label{subsec:math-morph-others}
-Gli operatori fin'ora descritti permettono di estrarre caratteristiche importanti all'interno delle immagini, ma, ad esempio, consentono difficilmente di effettuare un'equalizzazione di parametri dell'immagine, oppure di estrarre piccoli particolari d'interesse, oppure ancora di rilevare i contorni di un oggetto. Per ovviare a queste problematiche, si pu\`o ricorrere all'utilizzo di trasformazioni pi\`u specifiche, derivate da quelle di base. In particolare, possiamo definire l'operatore \textit{top-hat}, nelle due versioni \textit{bianca} e \textit{nera}, rispettivamente:
+Gli operatori finora descritti permettono di estrarre caratteristiche importanti all'interno delle immagini, ma, ad esempio, consentono difficilmente di effettuare un'equalizzazione di parametri dell'immagine, oppure di estrarre piccoli particolari d'interesse, oppure ancora di rilevare i contorni di un oggetto. Per ovviare a queste problematiche, si pu\`o ricorrere all'utilizzo di trasformazioni pi\`u specifiche, derivate da quelle di base. In particolare, possiamo definire l'operatore \textit{top-hat}, nelle due versioni \textit{bianca} e \textit{nera}, rispettivamente:
 \begin{equation}
 	\label{eq:white-top-hat}
 	g_{Q_{SE}}^{w}(I) = I - \gamma_{Q_{SE}}(I),
