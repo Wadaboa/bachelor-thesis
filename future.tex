@@ -8,7 +8,7 @@ Nel campo dell'\textit{image processing} e del riconoscimento ottico dei caratte
 	\frame{\includegraphics[width=0.28\textwidth]{img/ts-r-example.png}}
 	\caption{Tessera sanitaria retro con \textit{barcode}} \label{fig:ts-r-example}
 \end{wrapfigure}
-Con il lavoro svolto, siamo riusciti a incrementare notevolmente la percentuale di campi esattamente uguali ai valori direttamente osservabili, passando da un'accuratezza del 5\% a una pari a circa il 70\% sul numero totale di campi processati, che sono sono alcuni dei campi dei documenti d'identit\`a supportati. 
+Con il lavoro svolto, siamo riusciti a incrementare notevolmente la percentuale di campi esattamente uguali ai valori direttamente osservabili, passando da un'accuratezza del 5\% a una pari a circa il 70\% sul numero totale di campi processati, che sono solo alcuni dei campi dei documenti d'identit\`a supportati. 
 Per esempio, per la \textit{tessera sanitaria retro} (vedi figura \ref{fig:ts-r-example}) viene considerato solamente il \textit{codice fiscale}, mentre per la \textit{carta d'identit\`a fronte} si considerano \textit{nome}, \textit{cognome} e \textit{data di nascita}. Nel caso di pi\`u campi il risultato passa il controllo solo se tutti rispettano l'uguaglianza con il dato effettivo.\par 
 I tempi di esecuzione variano dai 5 ai 10 secondi per documento, a seconda della possibile difficolt\`a nelle operazioni di \textit{image matching}. In particolare, riusciamo a ottenere i risultati migliori nel caso in cui l'immagine analizzata sia una scansione, oppure quando questa \`e una fotografia scattata in modo parallelo rispetto al documento inquadrato.\par
 \begin{wrapfigure}{R}{0.35\textwidth}
