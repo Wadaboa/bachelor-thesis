@@ -9,7 +9,7 @@ Da qui in avanti ipotizzeremo di lavorare con immagini originali in \textit{scal
 Consideriamo l'immagine riportata in figura \ref{fig:image-bin-input} come esempio per l'analisi delle operazioni che andremo a descrivere.
 \begin{figure}[h]
 	\centering
-	\frame{\includegraphics[width=\linewidth]{img/image-bin-input.png}}
+	\frame{\includegraphics[width=0.97\linewidth]{img/image-bin-input.png}}
 	\caption{Input per le operazioni di sogliatura}
 	\label{fig:image-bin-input}
 \end{figure}
@@ -44,7 +44,7 @@ In figura \ref{fig:image-bin-global} \`e possibile osservare come l'attenta scel
 \end{algorithm}
 \begin{figure}[H]
 	\centering
-	\frame{\includegraphics[width=\linewidth]{img/global-thresh.png}}
+	\frame{\includegraphics[width=0.97\linewidth]{img/global-thresh.png}}
 	\caption{Output sogliatura globale con $\vars{thresh}=20$}
 	\label{fig:image-bin-global}
 \end{figure}
@@ -84,7 +84,7 @@ In figura \ref{fig:image-bin-local} \`e possibile osservare un esempio di soglia
 
 \begin{figure}[H]
 	\centering
-	\frame{\includegraphics[width=\linewidth]{img/local-thresh-gaussian.png}}
+	\frame{\includegraphics[width=0.97\linewidth]{img/local-thresh-gaussian.png}}
 	\caption{Output sogliatura locale \textit{Gaussiana} con $\vars{c}=2$ e $\vars{window}=11\times11$}
 	\label{fig:image-bin-local}
 \end{figure}
@@ -109,7 +109,7 @@ Questo tipo di sogliatura utilizza tecniche di analisi dell'\textit{istogramma}\
 Nel caso in cui l'immagine in analisi non presenti esattamente due massimi locali nella funzione istogramma, il procedimento di \textit{Otsu} potrebbe per\`o portare a risultati indesiderati, come \`e possibile osservare in figura \ref{fig:image-bin-otsu}.
 \begin{figure}[H]
 	\centering
-	\frame{\includegraphics[width=\linewidth]{img/otsu-thresh.png}}
+	\frame{\includegraphics[width=0.97\linewidth]{img/otsu-thresh.png}}
 	\caption{Output sogliatura di \textit{Otsu}}
 	\label{fig:image-bin-otsu}
 \end{figure}
@@ -128,7 +128,7 @@ In particolare, prima di tutto l'immagine originale viene \textit{ridimensionata
 Il problema principale di questa operazione riguarda l'eliminazione di informazione utile nel caso in cui il testo presente sia sufficientemente sbiadito.
 \begin{figure}[h]
 	\centering
-	\frame{\includegraphics[width=\linewidth]{img/image-bin-proposed-approach-common.png}}
+	\frame{\includegraphics[width=0.97\linewidth]{img/image-bin-proposed-approach-common.png}}
 	\caption{Output \textit{trasformazione comune} sogliatura proposta}
 	\label{fig:image-bin-proposed-approach-common}
 \end{figure}\par
@@ -147,13 +147,13 @@ Il punto \ref{enum:image-bin-proposed-approach-simple-otsu} viene utilizzato per
 \setcounter{totalnumber}{2}
 \begin{figure}[H]
 	\centering
-	\frame{\includegraphics[width=\linewidth]{img/image-bin-proposed-approach-canny.png}}
+	\frame{\includegraphics[width=0.97\linewidth]{img/image-bin-proposed-approach-canny.png}}
 	\caption{Output \textit{Canny edge detector} sogliatura proposta}
 	\label{fig:image-bin-proposed-approach-canny}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\frame{\includegraphics[width=\linewidth]{img/image-bin-proposed-approach-chars.png}}
+	\frame{\includegraphics[width=0.97\linewidth]{img/image-bin-proposed-approach-chars.png}}
 	\caption{Output \textit{bounding boxes} caratteri sogliatura proposta}
 	\label{fig:image-bin-proposed-approach-chars}
 \end{figure}
@@ -161,7 +161,7 @@ Il punto \ref{enum:image-bin-proposed-approach-simple-cut} utilizza una sorta di
 L'approccio di ritaglio utilizzato \`e efficace solamente nel caso in cui il testo sia l'elemento preminente nell'immagine.
 \begin{figure}[H]
 	\centering
-	\frame{\includegraphics[width=\linewidth]{img/image-bin-proposed-approach-simple.png}}
+	\frame{\includegraphics[width=0.97\linewidth]{img/image-bin-proposed-approach-simple.png}}
 	\caption{Output \textit{trasformazione semplice} sogliatura proposta}
 	\label{fig:image-bin-proposed-approach-simple}
 \end{figure}
@@ -188,7 +188,7 @@ Infine, il punto \ref{enum:image-bin-proposed-approach-complex-tophat} applica l
 Questo tipo di operazione (vedi figura \ref{fig:image-bin-proposed-approach-complex}) consente di correggere efficacemente condizioni di luce e/o contrasto non uniforme e  di recuperare testi leggermente sbiaditi, che venivano invece penalizzati dalla prima trasformazione descritta.
 \begin{figure}[H]
 	\centering
-	\frame{\includegraphics[width=\linewidth]{img/image-bin-proposed-approach-complex.png}}
+	\frame{\includegraphics[width=0.97\linewidth]{img/image-bin-proposed-approach-complex.png}}
 	\caption{Output \textit{trasformazione complessa} sogliatura proposta}
 	\label{fig:image-bin-proposed-approach-complex}
 \end{figure}
